@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Redirecting...</title>
+    <script>
+        // បម្លែង Path ផ្ទាល់ (ឧ. /automation) ឱ្យទៅជា Query Parameter (ឧ. /?view=automation)
+        (function() {
+            var pathSegments = window.location.pathname.split('/').filter(Boolean);
+            var page = pathSegments[0] || 'home';
+            var validPages = ['home', 'automation', 'downloads', 'tutorials', 'contact'];
+            
+            if (validPages.includes(page)) {
+                window.location.replace('/?view=' + page);
+            } else {
+                window.location.replace('/');
+            }
+        })();
+    </script>
+</head>
+<body>
+</body>
+</html>

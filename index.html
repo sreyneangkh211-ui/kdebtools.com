@@ -15,6 +15,17 @@
         }
     </script>
 
+    <!-- Synchronous Pre-Route: ចាក់សោរបង្ហាញតែ View ដែលត្រូវមួយគត់ពេល Refresh (ការពារការលោតត្រួតគ្នា ១០០%) -->
+    <script>
+        (function() {
+            const params = new URLSearchParams(window.location.search);
+            const view = params.get('view') || 'home';
+            const validPages = ['home', 'automation', 'downloads', 'tutorials', 'contact'];
+            const activePage = validPages.includes(view) ? view : 'home';
+            document.write('<style id="sync-route-style">#view-' + activePage + ' { display: block !important; }</style>');
+        })();
+    </script>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kdeb Tools - Automation & Software Platform</title>
     
@@ -40,10 +51,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 
     <style>
+        /* បិទរាល់ទំព័រទាំងអស់ជាស្រេចតាំងពីដំបូង */
+        .page-view { display: none !important; }
+        .page-view.active { display: block !important; }
+        .hidden { display: none !important; }
+
         body { 
             font-family: 'Kantumruy Pro', 'Plus Jakarta Sans', sans-serif; 
             background-color: #0B0F19; 
@@ -73,7 +89,7 @@
         
         .glow { box-shadow: 0 0 35px -5px rgba(99, 102, 241, 0.25); }
 
-        /* មុខងារលុបចោលរបាររំកិល (Hide scrollbar track but keep swipe functional on mobile) */
+        /* មុខងារលុបចោលរបាររំកិល */
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
@@ -99,23 +115,25 @@
                 <button onclick="navigateTo('home')" id="nav-home" class="nav-btn btn-hover-zoom px-3 py-1.5 rounded-xl border border-transparent hover:border-dark-border hover:bg-dark-card text-gray-300 hover:text-white">Home</button>
                 <button onclick="navigateTo('automation')" id="nav-automation" class="nav-btn btn-hover-zoom px-3 py-1.5 rounded-xl border border-transparent hover:border-dark-border hover:bg-dark-card text-gray-300 hover:text-white">Kdeb Automation</button>
                 
-                <!-- Downloads Hover Dropdown Container (ដោះស្រាយបញ្ហាគាំងលោតញាក់ៗ និងរៀបលំដាប់ថ្មី) -->
+                <!-- Downloads Hover Dropdown Container -->
                 <div class="relative group">
                     <button onclick="navigateTo('downloads')" id="nav-downloads" class="nav-btn btn-hover-zoom px-3 py-1.5 rounded-xl border border-transparent hover:border-dark-border hover:bg-dark-card text-gray-300 hover:text-white flex items-center gap-1">
                         Downloads <i class="fa-solid fa-chevron-down text-[10px] transition-transform group-hover:rotate-180"></i>
                     </button>
-                    <!-- Dropdown Menu Wrapper (ចាប់ផ្តើមពី top-full គ្មានចន្លោះទំនេរ ការពារការដាច់ Hover) -->
+                    <!-- Dropdown Menu Wrapper -->
                     <div class="absolute top-full left-0 pt-2 w-52 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                        <!-- Styled Container -->
                         <div class="bg-dark-card border border-dark-border rounded-xl shadow-2xl p-1.5 flex flex-col gap-1">
-                            <a href="index.html?view=downloads&cat=MainFile" class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-300 hover:text-white hover:bg-brand-600 transition">
+                            <a href="index.html?view=downloads&cat=MainFile" onclick="openDownloadsCat('MainFile', event)" class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-300 hover:text-white hover:bg-brand-600 transition">
                                 <i class="fa-solid fa-file-arrow-down text-emerald-400"></i> Main Files
                             </a>
-                            <a href="index.html?view=downloads&cat=Patch" class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-300 hover:text-white hover:bg-brand-600 transition">
+                            <a href="index.html?view=downloads&cat=Patch" onclick="openDownloadsCat('Patch', event)" class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-300 hover:text-white hover:bg-brand-600 transition">
                                 <i class="fa-solid fa-wand-magic-sparkles text-cyan-400"></i> Patch Update
                             </a>
-                            <a href="index.html?view=downloads&cat=LDPlayer" class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-300 hover:text-white hover:bg-brand-600 transition">
-                                <i class="fa-solid fa-mobile-screen-button text-brand-400"></i> LDPlayer / Emulator
+                            <a href="index.html?view=downloads&cat=APK" onclick="openDownloadsCat('APK', event)" class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-300 hover:text-white hover:bg-brand-600 transition">
+                                <i class="fa-brands fa-android text-purple-400"></i> App APK
+                            </a>
+                            <a href="index.html?view=downloads&cat=LDPlayer" onclick="openDownloadsCat('LDPlayer', event)" class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-300 hover:text-white hover:bg-brand-600 transition">
+                                <i class="fa-solid fa-mobile-screen-button text-brand-400"></i> Download LDPlayer
                             </a>
                         </div>
                     </div>
@@ -169,8 +187,8 @@
             </div>
         </section>
 
-        <!-- PAGE 2: KDEB TOOLS AUTOMATION -->
-        <section id="view-automation" class="page-view hidden py-10">
+        <!-- PAGE 2: KDEB TOOLS AUTOMATION (បាន Remove ប្រអប់ Download ស្ទួនចេញ) -->
+        <section id="view-automation" class="page-view py-10">
             <div class="max-w-6xl mx-auto px-4">
                 <div class="text-center mb-8">
                     <span class="text-xs font-bold bg-brand-500/20 text-brand-300 px-3 py-1 rounded-full border border-brand-500/30">KDEB TOOLS SUITE</span>
@@ -182,19 +200,11 @@
                     <h3 class="text-xl font-bold text-white text-center mb-8">Important Functions</h3>
                     <div id="importantFunctionsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-xs text-gray-300"></div>
                 </div>
-
-                <div class="bg-dark-card border border-dark-border rounded-2xl p-6 text-center my-8">
-                    <h3 class="text-xl font-bold text-white">ទាញយក Kdeb Tools Automation</h3>
-                    <p class="text-xs text-amber-400 mt-1">RAR Password: <strong>kdebtools</strong></p>
-                    <a href="https://example.com/kdeb-tools.zip" target="_blank" class="btn-hover-zoom inline-flex items-center gap-2 bg-brand-600 hover:bg-brand-500 text-white text-sm font-semibold px-6 py-3 rounded-xl mt-4">
-                        <i class="fa-solid fa-download"></i> Download Setup File
-                    </a>
-                </div>
             </div>
         </section>
 
-        <!-- PAGE 3: DOWNLOADS CENTER (លុបចោល All Files និងតម្រៀបទីតាំងថ្មី) -->
-        <section id="view-downloads" class="page-view hidden py-10">
+        <!-- PAGE 3: DOWNLOADS CENTER -->
+        <section id="view-downloads" class="page-view py-10">
             <div class="max-w-5xl mx-auto px-4">
                 <h1 class="text-3xl font-extrabold text-white text-center mb-4">Downloads Center</h1>
                 <p class="text-gray-400 text-xs sm:text-sm text-center mb-8">ទាញយកឯកសារជំនួយ កម្មវិធី Emulator និង Driver ផ្សេងៗ</p>
@@ -203,7 +213,8 @@
                 <div class="flex flex-wrap justify-center gap-2 mb-8 text-xs font-semibold" id="downloadFilters">
                     <button onclick="filterDownloads('MainFile')" id="btn-dl-MainFile" class="px-4 py-1.5 rounded-full bg-brand-600 text-white border border-brand-500 transition">Main Files</button>
                     <button onclick="filterDownloads('Patch')" id="btn-dl-Patch" class="px-4 py-1.5 rounded-full bg-dark-card text-gray-400 hover:text-white border border-dark-border transition">Patch Update</button>
-                    <button onclick="filterDownloads('LDPlayer')" id="btn-dl-LDPlayer" class="px-4 py-1.5 rounded-full bg-dark-card text-gray-400 hover:text-white border border-dark-border transition">LDPlayer / Emulator</button>
+                    <button onclick="filterDownloads('APK')" id="btn-dl-APK" class="px-4 py-1.5 rounded-full bg-dark-card text-gray-400 hover:text-white border border-dark-border transition">App APK</button>
+                    <button onclick="filterDownloads('LDPlayer')" id="btn-dl-LDPlayer" class="px-4 py-1.5 rounded-full bg-dark-card text-gray-400 hover:text-white border border-dark-border transition">Download LDPlayer</button>
                 </div>
 
                 <div id="customDownloadsList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
@@ -211,7 +222,7 @@
         </section>
 
         <!-- PAGE 4: TUTORIALS -->
-        <section id="view-tutorials" class="page-view hidden py-10">
+        <section id="view-tutorials" class="page-view py-10">
             <div class="max-w-6xl mx-auto px-4">
                 <h1 class="text-3xl font-extrabold text-white text-center mb-8">Tutorials & ព័ត៌មាន</h1>
                 <div id="customPostsList" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
@@ -219,7 +230,7 @@
         </section>
 
         <!-- PAGE 5: CONTACT SUPPORT -->
-        <section id="view-contact" class="page-view hidden py-12 text-center">
+        <section id="view-contact" class="page-view py-12 text-center">
             <div class="max-w-3xl mx-auto px-4">
                 <h1 class="text-3xl font-extrabold text-white mb-2">Contact Support</h1>
                 <p class="text-gray-400 text-xs mb-8">ប្រសិនបើអ្នកត្រូវការជំនួយបច្ចេកទេស សូមទាក់ទងមកយើងខ្ញុំ</p>
