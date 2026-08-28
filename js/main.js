@@ -1,12 +1,11 @@
 // =========================================================
 //                   FILE: js/main.js
-//       (ប្រព័ន្ធ Router ប្តូរទំព័រ Clean URL, SEO Title & Realtime Data)
+//       (ប្រព័ន្ធ Router, SEO Title & Direct Download Support)
 // =========================================================
 
 const BIN_ID = "6a917cb3da38895dfe1c169c";
 const API_KEY = "$2a$10$3jKyJxhLrAn/3gCKlwjvSOtBFGKwfnUDm6/J9E1BeuJVel/z2hTDy";
 
-// កំណត់ Browser Tab Title សម្រាប់ទំព័រនីមួយៗ
 const pageTitles = {
     home: "Kdeb Tools - Home Feed",
     automation: "Kdeb Tools - Kdeb Automation",
@@ -15,7 +14,6 @@ const pageTitles = {
     contact: "Kdeb Tools - Contact Support"
 };
 
-// មុខងារទាញយក Path ស្អាត (កម្ចាត់ index.html)
 function getCleanBasePath() {
     let path = window.location.pathname;
     if (path.endsWith('/index.html')) {
@@ -24,7 +22,6 @@ function getCleanBasePath() {
     return path === '' ? '/' : path;
 }
 
-// ROUTER: ប្តូរទំព័រ (Clean URL គ្មាន index.html និងប្តូរ Title លើ Tab ភ្លាមៗ)
 function navigateTo(pageId, pushToHistory = true) {
     const validPages = ['home', 'automation', 'downloads', 'tutorials', 'contact'];
     const activePage = validPages.includes(pageId) ? pageId : 'home';
@@ -32,27 +29,22 @@ function navigateTo(pageId, pushToHistory = true) {
     const syncStyle = document.getElementById('sync-route-style');
     if (syncStyle) syncStyle.remove();
 
-    // 1. ប្តូរ View
     document.querySelectorAll('.page-view').forEach(view => {
         view.classList.remove('active');
     });
     const targetView = document.getElementById('view-' + activePage) || document.getElementById('view-home');
     if (targetView) targetView.classList.add('active');
 
-    // 2. ដាក់ Style Active លើ Nav Button
     document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('nav-active'));
     const activeBtn = document.getElementById('nav-' + activePage);
     if (activeBtn) activeBtn.classList.add('nav-active');
 
-    // 3. ប្តូរឈ្មោះ Title លើ Browser Tab
     document.title = pageTitles[activePage] || pageTitles.home;
 
-    // 4. Scroll ទៅលើ
     if (pushToHistory) {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // 5. កែសម្រួល URL កុំឱ្យមានជាប់ពាក្យ index.html
     if (pushToHistory) {
         const basePath = getCleanBasePath();
         const prefix = basePath === '/' ? '' : basePath;
@@ -64,7 +56,6 @@ function navigateTo(pageId, pushToHistory = true) {
     }
 }
 
-// គាំទ្រការចុច Back / Forward លើ Browser
 window.addEventListener('popstate', (e) => {
     const params = new URLSearchParams(window.location.search);
     const view = params.get('view') || (e.state && e.state.page) || 'home';
@@ -77,11 +68,9 @@ window.addEventListener('popstate', (e) => {
     }
 });
 
-// Global Data State
 let globalDownloadsData = [];
 let currentDlFilter = 'MainFile';
 
-// Dynamic Play Video YouTube
 window.playYoutubeVideo = function(containerId, youtubeId) {
     const container = document.getElementById(containerId);
     if (container) {
@@ -97,7 +86,6 @@ window.playYoutubeVideo = function(containerId, youtubeId) {
     }
 };
 
-// បម្លែងប្រភេទចាស់
 function migrateOldDownloads(dataArray) {
     if (!Array.isArray(dataArray)) return [];
     return dataArray.map(item => {
@@ -110,7 +98,6 @@ function migrateOldDownloads(dataArray) {
     });
 }
 
-// ប្រព័ន្ធគ្រប់គ្រងប៊ូតុងត្រងប្រភេទឯកសារ
 window.filterDownloads = function(category, pushToHistory = true) {
     currentDlFilter = category || 'MainFile';
     
@@ -135,22 +122,40 @@ window.filterDownloads = function(category, pushToHistory = true) {
     renderDownloadsGrid();
 };
 
-// បើក Downloads តាម Category ពី Navbar
 window.openDownloadsCat = function(category, event) {
     if (event) event.preventDefault();
     navigateTo('downloads', false);
     filterDownloads(category, true);
 };
 
-// Render Downloads Grid
+// Render Downloads Grid ជាមួយ Release Notes និង Auto Date
 function renderDownloadsGrid() {
     const dlContainer = document.getElementById('customDownloadsList');
     if (!dlContainer) return;
 
     const filtered = globalDownloadsData.filter(d => d.category === currentDlFilter);
 
+    let ldHeaderHtml = '';
+    if (currentDlFilter === 'LDPlayer') {
+        ldHeaderHtml = `
+            <div class="col-span-1 md:col-span-2 bg-dark-card border border-dark-border rounded-2xl p-5 mb-2">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div>
+                        <h3 class="text-base font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-mobile-screen-button text-brand-400"></i> LDPlayer MNQ (Chinese Version)
+                        </h3>
+                        <p class="text-xs text-gray-400 mt-1">កម្មវិធី Android Emulator ជំនាន់ចិន កម្រិតស្រាល រលូន និងស៊ី RAM តិចបំផុត។</p>
+                    </div>
+                    <a href="https://www.ldmnq.com/other/version-history-and-release-notes.html" target="_blank" class="btn-hover-zoom inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs bg-brand-500/10 text-brand-300 border border-brand-500/20 hover:bg-brand-600 hover:text-white transition whitespace-nowrap">
+                        <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> គេហទំព័រដើម: ldmnq.com
+                    </a>
+                </div>
+            </div>
+        `;
+    }
+
     if (filtered.length === 0) {
-        dlContainer.innerHTML = `
+        dlContainer.innerHTML = ldHeaderHtml + `
             <div class="text-gray-500 text-center text-xs col-span-1 md:col-span-2 py-12 flex flex-col items-center justify-center gap-2">
                 <i class="fa-regular fa-folder-open text-2xl text-gray-600"></i>
                 <span>គ្មានឯកសារនៅក្នុងប្រភេទនេះនៅឡើយទេ</span>
@@ -159,7 +164,7 @@ function renderDownloadsGrid() {
         return;
     }
 
-    dlContainer.innerHTML = filtered.map(d => {
+    const cardsHtml = filtered.map(d => {
         let catLabel = d.category;
         let icon = 'fa-solid fa-file-arrow-down';
         
@@ -177,27 +182,50 @@ function renderDownloadsGrid() {
             icon = 'fa-brands fa-android text-purple-400';
         }
 
+        const hasNotes = Array.isArray(d.notes) && d.notes.length > 0;
+        const notesListHtml = hasNotes ? `
+            <div class="mt-3 pt-3 border-t border-dark-border/60">
+                <ul class="space-y-1 text-xs text-gray-300">
+                    ${d.notes.map(note => `<li class="flex items-start gap-1.5"><span class="text-gray-400">▪</span> <span>${note}</span></li>`).join('')}
+                </ul>
+            </div>
+        ` : '';
+
+        const dateTag = d.date ? `<span class="text-[11px] font-medium text-gray-400 ml-1.5">${d.date}</span>` : '';
+
         return `
-            <div class="bg-dark-card border border-dark-border rounded-xl p-4 flex items-center justify-between hover:border-brand-500/30 transition">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-brand-500/10 border border-brand-500/20 flex items-center justify-center">
-                        <i class="${icon} text-lg"></i>
+            <div class="bg-dark-card border border-dark-border rounded-2xl p-4 sm:p-5 flex flex-col justify-between hover:border-brand-500/40 transition">
+                <div>
+                    <div class="flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-brand-500/10 border border-brand-500/20 flex items-center justify-center flex-shrink-0">
+                                <i class="${icon} text-lg"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold text-white flex items-center flex-wrap gap-1">
+                                    <span>${d.name}</span>
+                                    ${dateTag}
+                                </h4>
+                                <div class="flex items-center gap-2 mt-0.5">
+                                    <span class="text-[10px] bg-brand-500/10 text-brand-300 px-1.5 py-0.5 rounded border border-brand-500/20">${catLabel}</span>
+                                    <span class="text-[11px] text-gray-500">${d.size || ''}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="${d.link}" target="_blank" download class="btn-hover-zoom bg-brand-600 hover:bg-brand-500 text-white px-4 py-2 rounded-xl text-xs flex items-center gap-1.5 font-bold shadow-md shadow-brand-600/20 whitespace-nowrap flex-shrink-0">
+                            <i class="fa-solid fa-download"></i> ទាញយក
+                        </a>
                     </div>
-                    <div>
-                        <h4 class="text-sm font-semibold text-white">${d.name}</h4>
-                        <span class="text-[10px] bg-brand-500/10 text-brand-300 px-1.5 py-0.5 rounded border border-brand-500/20">${catLabel}</span>
-                        <span class="text-[11px] text-gray-500 ml-1">${d.size || ''}</span>
-                    </div>
+                    ${notesListHtml}
                 </div>
-                <a href="${d.link}" target="_blank" download class="btn-hover-zoom bg-brand-600 hover:bg-brand-500 text-white px-3.5 py-2 rounded-lg text-xs flex items-center gap-1.5 font-semibold">
-                    <i class="fa-solid fa-download"></i> ទាញយក
-                </a>
             </div>
         `;
     }).join('');
+
+    dlContainer.innerHTML = ldHeaderHtml + cardsHtml;
 }
 
-// RENDER ALL DATA (ប្រើ nocache timestamp ដើម្បីធានាថាទាញយកទិន្នន័យស្រស់ៗជានិច្ច)
+// RENDER ALL DATA
 async function renderPublicData() {
     let functionsList = [];
     let tools = [];
@@ -227,7 +255,7 @@ async function renderPublicData() {
 
     renderDownloadsGrid();
 
-    // Functions
+    // 1. Functions
     const fnContainer = document.getElementById('importantFunctionsGrid');
     if (fnContainer) {
         if (functionsList.length === 0) {
@@ -246,7 +274,7 @@ async function renderPublicData() {
         }
     }
 
-    // Featured Tools
+    // 2. Featured Tools
     const toolsContainer = document.getElementById('homeFeaturedToolsGrid');
     if (toolsContainer) {
         if (tools.length === 0) {
@@ -269,7 +297,7 @@ async function renderPublicData() {
         }
     }
 
-    // Tutorials
+    // 3. Tutorials
     const postContainer = document.getElementById('customPostsList');
     if (postContainer) {
         if (posts.length === 0) {
@@ -309,7 +337,7 @@ async function renderPublicData() {
                         <div class="p-4 flex justify-between items-center bg-dark-subcard/30 border-t border-dark-border/40 mt-auto">
                             <span class="text-[11px] text-gray-500 font-mono">ID: ${p.youtubeId}</span>
                             <a href="https://www.youtube.com/watch?v=${p.youtubeId}" target="_blank" class="btn-hover-zoom bg-brand-600/10 hover:bg-brand-600 border border-brand-500/20 hover:border-brand-500 text-brand-300 hover:text-white px-3.5 py-1.5 rounded-xl text-xs flex items-center gap-1.5 font-semibold transition">
-                                <i class="fa-brands fa-youtube text-red-500"></i> Watch on YouTube
+                            <i class="fa-brands fa-youtube text-red-500"></i> Watch on YouTube
                             </a>
                         </div>
                     </div>
@@ -319,9 +347,7 @@ async function renderPublicData() {
     }
 }
 
-// ដំណើរការ routing ពេលបើកទំព័រ
 function initApp() {
-    // លុប /index.html ចេញពី URL bar ស្អាត
     if (window.location.pathname.endsWith('/index.html')) {
         const cleanPath = window.location.pathname.replace(/\/index\.html$/, '') || '/';
         const newUrl = cleanPath + window.location.search;

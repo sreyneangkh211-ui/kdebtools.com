@@ -40,7 +40,7 @@
 </head>
 <body class="min-h-screen flex flex-col justify-center">
 
-    <!-- ================= LOGIN SCREEN (Username & Password) ================= -->
+    <!-- ================= LOGIN SCREEN ================= -->
     <div id="loginScreen" class="max-w-md w-full mx-auto p-6">
         <div class="bg-dark-card border border-dark-border rounded-2xl p-8 shadow-2xl text-center">
             <img src="image/closed.ico" alt="Logo" class="h-12 w-auto mx-auto mb-4" onerror="this.style.display='none'">
@@ -170,7 +170,7 @@
             </div>
         </div>
 
-        <!-- TAB 3: DOWNLOADS (រួមបញ្ចូលជម្រើសប្រភេទទាំង ៤ ថ្មី) -->
+        <!-- TAB 3: DOWNLOADS -->
         <div id="content-downloads" class="admin-tab-content hidden grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="bg-dark-card p-6 rounded-2xl border border-dark-border h-fit">
                 <div class="flex items-center justify-between mb-4">
@@ -184,7 +184,7 @@
                         <input type="file" id="dFileInput" onchange="autoFillFileInfo(this)" class="w-full bg-dark-bg border border-dark-border rounded-lg p-2 text-gray-400 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:bg-emerald-600 file:text-white">
                     </div>
                     <div>
-                        <label class="block text-gray-300 font-semibold mb-1">ឈ្មោះឯកសារ</label>
+                        <label class="block text-gray-300 font-semibold mb-1">ឈ្មោះឯកសារ / កំណែ Update (ឧ. Patch Update: V1.6.17)</label>
                         <input type="text" id="dName" placeholder="ឈ្មោះ File..." required class="w-full bg-dark-bg border border-dark-border rounded-lg p-2.5 text-white outline-none focus:border-emerald-500">
                     </div>
                     <div>
@@ -203,6 +203,11 @@
                     <div>
                         <label class="block text-gray-300 font-semibold mb-1">Download Link (បើមិនរើស File)</label>
                         <input type="text" id="dLink" placeholder="https://..." class="w-full bg-dark-bg border border-dark-border rounded-lg p-2.5 text-white outline-none focus:border-emerald-500">
+                    </div>
+                    <!-- បន្ថែម Changelog / Release Notes -->
+                    <div>
+                        <label class="block text-gray-300 font-semibold mb-1">កំណត់សម្គាល់កែលម្អ / Release Notes (១ ជួរ = ១ ចំណុច)</label>
+                        <textarea id="dNotes" rows="4" placeholder="Fixed follow/unfollow pages/profiles&#10;Fixed add/follow friends&#10;Fixed known issues" class="w-full bg-dark-bg border border-dark-border rounded-lg p-2.5 text-white outline-none focus:border-emerald-500"></textarea>
                     </div>
                     <button type="submit" id="dlSubmitBtn" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 rounded-lg transition mt-2">+ រក្សាទុក File</button>
                 </form>

@@ -3,7 +3,6 @@
 //       (ប្រព័ន្ធ Logic, Auto-Login & CRUD របស់ Admin)
 // =========================================================
 
-// កំណត់ព័ត៌មាន Cloud Database របស់អ្នក (JSONbin.io)
 const BIN_ID = "6a917cb3da38895dfe1c169c";
 const API_KEY = "$2a$10$3jKyJxhLrAn/3gCKlwjvSOtBFGKwfnUDm6/J9E1BeuJVel/z2hTDy";
 
@@ -20,9 +19,9 @@ const defaultFeaturedTools = [
 ];
 
 const defaultDownloads = [
-    { id: 1, name: "LDPlayer 9 Clean Optimized", category: "LDPlayer", size: "620 MB", link: "https://example.com/ld9.exe" },
-    { id: 2, name: "Bob Prime Main Setup v2.6", category: "MainFile", size: "45 MB", link: "https://example.com/setup.exe" },
-    { id: 3, name: "Bob Prime Patch Update v2.6.1", category: "Patch", size: "12 MB", link: "https://example.com/patch.exe" }
+    { id: 1, name: "LDPlayer 9 Clean Optimized", category: "LDPlayer", size: "620 MB", link: "https://example.com/ld9.exe", date: "Aug-17-2026", notes: [] },
+    { id: 2, name: "Bob Prime Main Setup v2.6", category: "MainFile", size: "45 MB", link: "https://example.com/setup.exe", date: "Aug-17-2026", notes: [] },
+    { id: 3, name: "Patch Update: V1.6.17", category: "Patch", size: "12 MB", link: "https://example.com/patch.exe", date: "Aug-17-2026", notes: ["Fixed follow/unfollow pages/profiles", "Fixed add/follow friends", "Fixed known issues"] }
 ];
 
 const defaultPosts = [
@@ -34,7 +33,17 @@ let tools = [];
 let downloads = [];
 let posts = [];
 
-// ប្រព័ន្ធស្វ័យប្រវត្តិបម្លែងទិន្នន័យប្រភេទចាស់ ទៅប្រភេទថ្មីដើម្បីកុំឱ្យគាំងបង្ហាញទទេ (Auto-Migration)
+// Helper: បង្កើត Auto Date ទម្រង់ "Aug-17-2026"
+function getAutoFormattedDate() {
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const now = new Date();
+    const m = months[now.getMonth()];
+    const d = String(now.getDate()).padStart(2, '0');
+    const y = now.getFullYear();
+    return `${m}-${d}-${y}`;
+}
+
+// ប្រព័ន្ធ Auto-Migration
 function migrateOldDownloads(dataArray) {
     if (!Array.isArray(dataArray)) return dataArray;
     return dataArray.map(item => {
@@ -43,11 +52,13 @@ function migrateOldDownloads(dataArray) {
         } else if (item.category === 'Tool') {
             item.category = 'Patch'; 
         }
+        if (!item.date) item.date = getAutoFormattedDate();
+        if (!item.notes) item.notes = [];
         return item;
     });
 }
 
-// ================= 1. AUTHENTICATION & REMEMBER SYSTEM =================
+// ================= 1. AUTHENTICATION =================
 
 function checkAuthOnLoad() {
     const isLoggedIn = localStorage.getItem('kdeb_admin_logged_in');
@@ -98,10 +109,9 @@ function logout() {
     if (document.getElementById('passInput')) document.getElementById('passInput').value = '';
 }
 
-// ================= 2. DATA MANAGEMENT (ទាញយកទិន្នន័យពី Cloud) =================
+// ================= 2. DATA MANAGEMENT =================
 
 async function loadAdminData() {
-    // បង្ហាញពាក្យ Loading លើប៊ូតុងអាប់ដេតបណ្តោះអាសន្ន
     const listFn = document.getElementById('list-functions');
     if (listFn) listFn.innerHTML = '<p class="text-cyan-400 text-xs animate-pulse">⏳ កំពុងទាញយកទិន្នន័យពី Cloud...</p>';
 
@@ -154,7 +164,6 @@ function autoFillFileInfo(input) {
     }
 }
 
-// រក្សាទុកទិន្នន័យទៅកាន់ Cloud JSONbin.io
 async function syncAll() {
     const dataToSave = {
         functions: functionsList,
@@ -186,7 +195,6 @@ async function syncAll() {
     }
 }
 
-// មុខងារទាញយក YouTube Video ID ឱ្យបានត្រឹមត្រូវបំផុត (ធន់នឹង parameter បន្ថែមដូចជា &t=52s)
 function getYoutubeId(url) {
     try {
         const urlObj = new URL(url);
@@ -306,10 +314,13 @@ function resetToolForm() {
     document.getElementById('toolCancelBtn').classList.add('hidden');
 }
 
+// មុខងារ SAVE DOWNLOAD (គាំទ្រ Notes និង Auto Date)
 function saveDownload(e) {
     e.preventDefault();
     const editId = document.getElementById('dlEditId').value;
     const fileUrl = document.getElementById('dLink').value.trim();
+    const rawNotes = document.getElementById('dNotes') ? document.getElementById('dNotes').value : '';
+    const notesArray = rawNotes.split('\n').map(n => n.trim().replace(/^[-•▪*]\s*/, '')).filter(n => n.length > 0);
 
     if (!fileUrl) {
         alert('សូមបញ្ចូល Link Download ឯកសារ!');
@@ -323,6 +334,9 @@ function saveDownload(e) {
             downloads[idx].category = document.getElementById('dCategory').value;
             downloads[idx].size = document.getElementById('dSize').value || 'Direct File';
             downloads[idx].link = fileUrl;
+            downloads[idx].notes = notesArray;
+            // អាចរក្សាកាលបរិច្ឆេទចាស់ ឬអាប់ដេតថ្មី
+            if (!downloads[idx].date) downloads[idx].date = getAutoFormattedDate();
         }
     } else {
         downloads.unshift({
@@ -330,7 +344,9 @@ function saveDownload(e) {
             name: document.getElementById('dName').value,
             category: document.getElementById('dCategory').value,
             size: document.getElementById('dSize').value || 'Direct File',
-            link: fileUrl
+            link: fileUrl,
+            date: getAutoFormattedDate(), // កាលបរិច្ឆេទ Release ស្វ័យប្រវត្តិ
+            notes: notesArray
         });
     }
     if (syncAll()) {
@@ -347,6 +363,9 @@ function editDownload(id) {
     document.getElementById('dCategory').value = item.category;
     document.getElementById('dSize').value = item.size || '';
     document.getElementById('dLink').value = item.link || '';
+    if (document.getElementById('dNotes')) {
+        document.getElementById('dNotes').value = (item.notes || []).join('\n');
+    }
     document.getElementById('dlFormTitle').innerHTML = '<i class="fa-solid fa-pen-to-square"></i> កែសម្រួល File Download';
     document.getElementById('dlSubmitBtn').innerText = '💾 រក្សាទុកការកែប្រែ';
     document.getElementById('dlCancelBtn').classList.remove('hidden');
@@ -356,6 +375,7 @@ function editDownload(id) {
 function resetDownloadForm() {
     document.getElementById('dlForm').reset();
     document.getElementById('dlEditId').value = '';
+    if (document.getElementById('dNotes')) document.getElementById('dNotes').value = '';
     document.getElementById('dlFormTitle').innerHTML = '<i class="fa-solid fa-plus-circle"></i> Upload / បន្ថែម File';
     document.getElementById('dlSubmitBtn').innerText = '+ រក្សាទុក File';
     document.getElementById('dlCancelBtn').classList.add('hidden');
@@ -490,17 +510,30 @@ function renderAllTabs() {
             if (d.category === 'LDPlayer') catLabel = 'LDPlayer / Emulator';
             else if (d.category === 'MainFile') catLabel = 'Main Files';
             else if (d.category === 'Patch') catLabel = 'Patch Update';
+            else if (d.category === 'APK') catLabel = 'App APK';
+
+            const notesList = (d.notes && d.notes.length > 0) 
+                ? `<ul class="mt-2 space-y-0.5 text-[11px] text-gray-400">${d.notes.map(n => `<li>▪ ${n}</li>`).join('')}</ul>` 
+                : '';
 
             return `
-                <div class="flex justify-between items-center p-3.5 bg-dark-bg border border-dark-border rounded-xl">
-                    <div>
-                        <h4 class="font-bold text-white text-sm">${d.name}</h4>
-                        <span class="text-[10px] bg-brand-500/10 text-brand-300 px-1.5 py-0.5 rounded">${catLabel}</span>
-                        <span class="text-[11px] text-gray-500 ml-1">${d.size || ''}</span>
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="editDownload(${d.id})" class="text-blue-400 hover:text-blue-300 bg-blue-500/10 px-2.5 py-1 rounded border border-blue-500/20"><i class="fa-solid fa-pen"></i> កែប្រែ</button>
-                        <button onclick="removeItem('download', ${d.id})" class="text-red-400 hover:text-red-300 bg-red-500/10 px-2.5 py-1 rounded border border-red-500/20"><i class="fa-solid fa-trash"></i> លុប</button>
+                <div class="p-3.5 bg-dark-bg border border-dark-border rounded-xl">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h4 class="font-bold text-white text-sm">${d.name}</h4>
+                                <span class="text-[10px] text-gray-400 bg-dark-card px-2 py-0.5 rounded border border-dark-border">${d.date || ''}</span>
+                            </div>
+                            <div class="mt-1 flex items-center gap-2">
+                                <span class="text-[10px] bg-brand-500/10 text-brand-300 px-1.5 py-0.5 rounded">${catLabel}</span>
+                                <span class="text-[11px] text-gray-500">${d.size || ''}</span>
+                            </div>
+                            ${notesList}
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="editDownload(${d.id})" class="text-blue-400 hover:text-blue-300 bg-blue-500/10 px-2.5 py-1 rounded border border-blue-500/20"><i class="fa-solid fa-pen"></i> កែប្រែ</button>
+                            <button onclick="removeItem('download', ${d.id})" class="text-red-400 hover:text-red-300 bg-red-500/10 px-2.5 py-1 rounded border border-red-500/20"><i class="fa-solid fa-trash"></i> លុប</button>
+                        </div>
                     </div>
                 </div>
             `;
