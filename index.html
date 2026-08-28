@@ -7,6 +7,14 @@
 <html lang="km" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
+    
+    <!-- Auto-Redirect: បង្វែរពី pages.dev ទៅ kdebtools.com ភ្លាមៗ -->
+    <script>
+        if (window.location.hostname.includes('pages.dev')) {
+            window.location.replace('https://kdebtools.com' + window.location.search);
+        }
+    </script>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kdeb Tools - Automation & Software Platform</title>
     
@@ -59,7 +67,7 @@
                 <span class="text-lg font-extrabold text-white tracking-tight">KDEB <span class="text-brand-400">TOOLS</span></span>
             </div>
 
-            <!-- Main Menu Links -->
+            <!-- Main Menu Links (លុបប៊ូតុង Admin Portal ចេញ) -->
             <nav class="flex items-center space-x-1 sm:space-x-2 text-xs sm:text-sm font-medium overflow-x-auto">
                 <button onclick="navigateTo('home')" id="nav-home" class="nav-link px-2.5 sm:px-3 py-2 text-gray-300 hover:text-white transition">Home</button>
                 <button onclick="navigateTo('automation')" id="nav-automation" class="nav-link px-2.5 sm:px-3 py-2 text-gray-300 hover:text-white transition">Kdeb Automation</button>
@@ -164,7 +172,7 @@
             </div>
         </section>
 
-        <!-- PAGE 6: WEB UTILITIES -->
+        <!-- PAGE 6: WEB UTILITIES (2FA, UID Check & IP Tool) -->
         <section id="view-utilities" class="page-view hidden py-10">
             <div class="max-w-5xl mx-auto px-4">
                 <div class="text-center mb-8">
