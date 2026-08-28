@@ -1,21 +1,44 @@
 // =========================================================
-//                   FILE: main.js
-//       (ប្រព័ន្ធ Router ប្តូរទំព័រ & Render ទិន្នន័យពី Storage)
+//                   FILE: js/main.js
+//       (ប្រព័ន្ធ Router ប្តូរទំព័រ Clean URL & Render ទិន្នន័យ)
 // =========================================================
 
-// ROUTER: ប្តូរទំព័រ
-function navigateTo(pageId) {
+// ROUTER: ប្តូរទំព័រ (Clean URL គ្មានសញ្ញា #)
+function navigateTo(pageId, pushToHistory = true) {
+    const validPages = ['home', 'automation', 'downloader', 'downloads', 'tutorials', 'utilities', 'contact'];
+    const activePage = validPages.includes(pageId) ? pageId : 'home';
+
+    // 1. បិទ/បើក View
     document.querySelectorAll('.page-view').forEach(view => view.classList.add('hidden'));
-    const targetView = document.getElementById('view-' + pageId) || document.getElementById('view-home');
-    targetView.classList.remove('hidden');
+    const targetView = document.getElementById('view-' + activePage) || document.getElementById('view-home');
+    if (targetView) targetView.classList.remove('hidden');
 
+    // 2. ដាក់ពណ៌ Active លើ Menu
     document.querySelectorAll('.nav-link').forEach(btn => btn.classList.remove('tab-active'));
-    const activeBtn = document.getElementById('nav-' + pageId);
-    if(activeBtn) activeBtn.classList.add('tab-active');
+    const activeBtn = document.getElementById('nav-' + activePage);
+    if (activeBtn) activeBtn.classList.add('tab-active');
 
+    // 3. អូសទៅលើបង្អស់
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    location.hash = pageId;
+
+    // 4. កែសម្រួល URL កុំឱ្យមានសញ្ញា #
+    if (pushToHistory) {
+        if (activePage === 'home') {
+            // ទំព័រដើម បង្ហាញតែ https://kdebtools.com/ ស្អាត (គ្មាន #)
+            history.pushState({ page: 'home' }, '', window.location.pathname);
+        } else {
+            // ទំព័រផ្សេងៗ បង្ហាញតាម Parameter ស្អាត (គ្មាន #)
+            history.pushState({ page: activePage }, '', '?view=' + activePage);
+        }
+    }
 }
+
+// គាំទ្រការចុច Back / Forward លើ Browser
+window.addEventListener('popstate', (e) => {
+    const params = new URLSearchParams(window.location.search);
+    const view = params.get('view') || (e.state && e.state.page) || 'home';
+    navigateTo(view, false);
+});
 
 // ទិន្នន័យ Default
 const defaultFunctions = [
@@ -114,8 +137,9 @@ function renderPublicData() {
 
 // EVENT LISTENERS
 window.addEventListener('load', () => {
-    const hash = location.hash.replace('#', '') || 'home';
-    navigateTo(hash);
+    const params = new URLSearchParams(window.location.search);
+    const view = params.get('view') || 'home';
+    navigateTo(view, false);
     renderPublicData();
 });
 
