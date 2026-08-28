@@ -1,6 +1,6 @@
 // =========================================================
 //                   FILE: js/main.js
-//       (ប្រព័ន្ធ Router ប្តូរទំព័រ Clean URL & Dynamic Title)
+//       (ប្រព័ន្ធ Router ប្តូរទំព័រ Clean URL, SEO Title & Realtime Data)
 // =========================================================
 
 const BIN_ID = "6a917cb3da38895dfe1c169c";
@@ -8,14 +8,14 @@ const API_KEY = "$2a$10$3jKyJxhLrAn/3gCKlwjvSOtBFGKwfnUDm6/J9E1BeuJVel/z2hTDy";
 
 // កំណត់ Browser Tab Title សម្រាប់ទំព័រនីមួយៗ
 const pageTitles = {
-    home: "Kdeb Tools - Automation & Software Platform",
+    home: "Kdeb Tools - Home Feed",
     automation: "Kdeb Tools - Kdeb Automation",
     downloads: "Kdeb Tools - Downloads Center",
     tutorials: "Kdeb Tools - Tutorials & News",
     contact: "Kdeb Tools - Contact Support"
 };
 
-// មុខងារទាញយក Path ស្អាត (លុប index.html ចេញពី URL)
+// មុខងារទាញយក Path ស្អាត (កម្ចាត់ index.html)
 function getCleanBasePath() {
     let path = window.location.pathname;
     if (path.endsWith('/index.html')) {
@@ -70,8 +70,8 @@ window.addEventListener('popstate', (e) => {
     const view = params.get('view') || (e.state && e.state.page) || 'home';
     const cat = params.get('cat');
     navigateTo(view, false);
-    if (view === 'downloads' && cat) {
-        filterDownloads(cat, false);
+    if (view === 'downloads') {
+        filterDownloads(cat || 'MainFile', false);
     } else {
         renderPublicData();
     }
@@ -112,13 +112,13 @@ function migrateOldDownloads(dataArray) {
 
 // ប្រព័ន្ធគ្រប់គ្រងប៊ូតុងត្រងប្រភេទឯកសារ
 window.filterDownloads = function(category, pushToHistory = true) {
-    currentDlFilter = category;
+    currentDlFilter = category || 'MainFile';
     
     const categories = ['MainFile', 'Patch', 'APK', 'LDPlayer'];
     categories.forEach(cat => {
         const btn = document.getElementById(`btn-dl-${cat}`);
         if (btn) {
-            if (cat === category) {
+            if (cat === currentDlFilter) {
                 btn.className = "px-4 py-1.5 rounded-full bg-brand-600 text-white border border-brand-500 transition";
             } else {
                 btn.className = "px-4 py-1.5 rounded-full bg-dark-card text-gray-400 hover:text-white border border-dark-border transition";
@@ -129,7 +129,7 @@ window.filterDownloads = function(category, pushToHistory = true) {
     if (pushToHistory) {
         const basePath = getCleanBasePath();
         const prefix = basePath === '/' ? '' : basePath;
-        history.pushState({ page: 'downloads', cat: category }, '', prefix + `?view=downloads&cat=${category}`);
+        history.pushState({ page: 'downloads', cat: currentDlFilter }, '', prefix + `?view=downloads&cat=${currentDlFilter}`);
     }
     
     renderDownloadsGrid();
@@ -197,16 +197,19 @@ function renderDownloadsGrid() {
     }).join('');
 }
 
-// RENDER ALL DATA ពី JSONBin
+// RENDER ALL DATA (ប្រើ nocache timestamp ដើម្បីធានាថាទាញយកទិន្នន័យស្រស់ៗជានិច្ច)
 async function renderPublicData() {
     let functionsList = [];
     let tools = [];
     let posts = [];
 
     try {
-        const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+        const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest?nocache=${Date.now()}`, {
             method: 'GET',
-            headers: { 'X-Master-Key': API_KEY }
+            headers: { 
+                'X-Master-Key': API_KEY,
+                'Cache-Control': 'no-cache'
+            }
         });
         
         if (response.ok) {
@@ -318,7 +321,7 @@ async function renderPublicData() {
 
 // ដំណើរការ routing ពេលបើកទំព័រ
 function initApp() {
-    // លុប /index.html ចេញពី URL bar ភ្លាមៗ
+    // លុប /index.html ចេញពី URL bar ស្អាត
     if (window.location.pathname.endsWith('/index.html')) {
         const cleanPath = window.location.pathname.replace(/\/index\.html$/, '') || '/';
         const newUrl = cleanPath + window.location.search;

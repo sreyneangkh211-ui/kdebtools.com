@@ -8,8 +8,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO Meta Tags -->
     <title>Kdeb Tools - Web Utilities</title>
-    
+    <meta name="description" content="Kdeb Tools Web Utilities - 2FA Live Code Generator, Facebook UID Live Checker, My IP Address & ISP Analyzer.">
+    <meta name="keywords" content="Kdeb Tools, kdeb tools, 2FA live generator, UID live checker, IP address checker, web utilities">
+
+    <!-- Anti-Cache Headers -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
     <!-- Favicon Icon -->
     <link class="rounded-lg" rel="icon" type="image/x-icon" href="image/closed.ico">
     
@@ -46,19 +55,13 @@
         .code-font { font-family: 'JetBrains Mono', monospace; }
         .glass { background: rgba(11, 15, 25, 0.9); backdrop-filter: blur(16px); }
         
-        /* Button Hover Zoom-In / Zoom-Out Animation */
         .btn-hover-zoom {
             transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s ease, box-shadow 0.2s ease;
             transform-origin: center;
         }
-        .btn-hover-zoom:hover {
-            transform: scale(1.06);
-        }
-        .btn-hover-zoom:active {
-            transform: scale(0.95);
-        }
+        .btn-hover-zoom:hover { transform: scale(1.06); }
+        .btn-hover-zoom:active { transform: scale(0.95); }
 
-        /* Nav Button Active State */
         .nav-btn.nav-active {
             background-color: #4f46e5 !important;
             color: #ffffff !important;
@@ -66,14 +69,8 @@
             box-shadow: none !important;
         }
 
-        /* លុបចោលរបាររំកិល (Hide scrollbar track but keep swipe functional on mobile) */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white">
@@ -81,44 +78,43 @@
     <!-- ================= NAVBAR ================= -->
     <header class="sticky top-0 z-50 glass border-b border-dark-border">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <a href="index.html?view=home" class="flex items-center space-x-3 cursor-pointer btn-hover-zoom">
+            <a href="/" class="flex items-center space-x-3 cursor-pointer btn-hover-zoom">
                 <img src="image/closed.ico" alt="Logo" class="h-9 w-auto object-contain rounded-lg p-1 bg-white/5 border border-white/10" onerror="this.style.display='none'; document.getElementById('altLogo').classList.remove('hidden');">
                 <i id="altLogo" class="fa-solid fa-bolt text-brand-500 text-2xl hidden"></i>
                 <span class="text-lg font-extrabold text-white tracking-tight">KDEB <span class="text-brand-400">TOOLS</span></span>
             </a>
 
-            <!-- Menu Navigation (លុបចោល scrollbar និងរៀបលំដាប់ Dropdown ថ្មីទាំង ៤) -->
+            <!-- Menu Navigation -->
             <nav class="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-medium overflow-x-auto no-scrollbar py-2.5 px-1 md:overflow-visible">
-                <a href="index.html?view=home" class="btn-hover-zoom px-3 py-1.5 rounded-xl border border-transparent hover:border-dark-border hover:bg-dark-card text-gray-300 hover:text-white">Home</a>
-                <a href="index.html?view=automation" class="btn-hover-zoom px-3 py-1.5 rounded-xl border border-transparent hover:border-dark-border hover:bg-dark-card text-gray-300 hover:text-white">Kdeb Automation</a>
+                <a href="/?view=home" class="btn-hover-zoom px-3 py-1.5 rounded-xl border border-transparent hover:border-dark-border hover:bg-dark-card text-gray-300 hover:text-white">Home</a>
+                <a href="/?view=automation" class="btn-hover-zoom px-3 py-1.5 rounded-xl border border-transparent hover:border-dark-border hover:bg-dark-card text-gray-300 hover:text-white">Kdeb Automation</a>
                 
                 <!-- Downloads Hover Dropdown Container -->
                 <div class="relative group">
-                    <a href="index.html?view=downloads" class="btn-hover-zoom px-3 py-1.5 rounded-xl border border-transparent hover:border-dark-border hover:bg-dark-card text-gray-300 hover:text-white flex items-center gap-1">
+                    <a href="/?view=downloads" class="btn-hover-zoom px-3 py-1.5 rounded-xl border border-transparent hover:border-dark-border hover:bg-dark-card text-gray-300 hover:text-white flex items-center gap-1">
                         Downloads <i class="fa-solid fa-chevron-down text-[10px] transition-transform group-hover:rotate-180"></i>
                     </a>
-                    <!-- Dropdown Menu -->
                     <div class="absolute top-full left-0 mt-1 w-52 rounded-xl bg-dark-card border border-dark-border shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                         <div class="bg-dark-card border border-dark-border rounded-xl shadow-2xl p-1.5 flex flex-col gap-1">
-                            <a href="index.html?view=downloads&cat=MainFile" class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-300 hover:text-white hover:bg-brand-600 transition">
+                            <a href="/?view=downloads&cat=MainFile" class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-300 hover:text-white hover:bg-brand-600 transition">
                                 <i class="fa-solid fa-file-arrow-down text-emerald-400"></i> Main Files
                             </a>
-                            <a href="index.html?view=downloads&cat=Patch" class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-300 hover:text-white hover:bg-brand-600 transition">
+                            <a href="/?view=downloads&cat=Patch" class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-300 hover:text-white hover:bg-brand-600 transition">
                                 <i class="fa-solid fa-wand-magic-sparkles text-cyan-400"></i> Patch Update
                             </a>
-                            <a href="index.html?view=downloads&cat=APK" class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-300 hover:text-white hover:bg-brand-600 transition">
+                            <a href="/?view=downloads&cat=APK" class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-300 hover:text-white hover:bg-brand-600 transition">
                                 <i class="fa-brands fa-android text-purple-400"></i> App APK
                             </a>
-                            <a href="index.html?view=downloads&cat=LDPlayer" class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-300 hover:text-white hover:bg-brand-600 transition">
+                            <a href="/?view=downloads&cat=LDPlayer" class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-300 hover:text-white hover:bg-brand-600 transition">
                                 <i class="fa-solid fa-mobile-screen-button text-brand-400"></i> Download LDPlayer
                             </a>
                         </div>
                     </div>
                 </div>
 
-                <a href="index.html?view=tutorials" class="btn-hover-zoom px-3 py-1.5 rounded-xl border border-transparent hover:border-dark-border hover:bg-dark-card text-gray-300 hover:text-white">Tutorials</a>
+                <a href="/?view=tutorials" class="btn-hover-zoom px-3 py-1.5 rounded-xl border border-transparent hover:border-dark-border hover:bg-dark-card text-gray-300 hover:text-white">Tutorials</a>
                 <a href="utilities.html" class="nav-btn nav-active btn-hover-zoom px-3 py-1.5 rounded-xl border border-transparent hover:border-dark-border hover:bg-dark-card text-white">Web Utilities</a>
-                <a href="index.html?view=contact" class="btn-hover-zoom px-3 py-1.5 rounded-xl border border-transparent hover:border-dark-border hover:bg-dark-card text-gray-300 hover:text-white">Contact</a>
+                <a href="/?view=contact" class="btn-hover-zoom px-3 py-1.5 rounded-xl border border-transparent hover:border-dark-border hover:bg-dark-card text-gray-300 hover:text-white">Contact</a>
             </nav>
         </div>
     </header>
@@ -181,24 +177,22 @@
         </div>
     </main>
 
-    <!-- ================= 2FA POPUP MODAL ================= -->
+    <!-- Modals -->
+    <!-- 2FA POPUP MODAL -->
     <div id="modal-2fa" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md hidden px-4">
         <div class="bg-dark-card border border-dark-border rounded-2xl max-w-lg w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
             <button onclick="close2FAModal()" class="btn-hover-zoom absolute top-4 right-4 text-gray-400 hover:text-white text-lg">
                 <i class="fa-solid fa-xmark"></i>
             </button>
-
             <div class="text-center mb-6">
                 <i class="fa-solid fa-key text-yellow-400 text-3xl mb-2"></i>
                 <h3 class="text-xl font-bold text-white">2FA Live Code Generator</h3>
                 <p class="text-xs text-gray-400">គាំទ្រ Secret Key ពី Facebook, Google, TikTok, Telegram...</p>
             </div>
-
             <div class="flex gap-2 mb-4">
                 <input type="text" id="twoFaInput" placeholder="បញ្ចូល Secret Key (ឧ. JBSWY3DPEHPK3PXP)..." class="flex-grow bg-dark-bg border border-dark-border rounded-xl px-3 py-2.5 text-white code-font text-xs outline-none focus:border-yellow-500 uppercase">
                 <button onclick="generate2FACode()" class="btn-hover-zoom bg-yellow-500 hover:bg-yellow-400 text-black font-bold px-4 py-2.5 rounded-xl text-xs">បង្កើតកូដ</button>
             </div>
-
             <div id="twoFaResultBox" class="hidden bg-dark-bg border border-dark-border rounded-xl p-4 text-center relative overflow-hidden mb-4">
                 <div class="absolute top-0 left-0 right-0 h-1 bg-dark-border">
                     <div id="twoFaProgressBar" class="h-full bg-yellow-400 transition-all duration-1000 ease-linear" style="width: 100%;"></div>
@@ -215,12 +209,10 @@
                 </button>
                 <p id="copyAlertMsg" class="hidden text-emerald-400 text-[11px] mt-1 font-semibold">បានចម្លងកូដជោគជ័យ!</p>
             </div>
-
             <div class="border-t border-dark-border pt-4">
                 <label class="block text-xs font-bold text-gray-300 mb-1">Batch 2FA (បញ្ចូលច្រើន Key ព្រមគ្នា):</label>
                 <textarea id="batchInput" rows="3" placeholder="Paste Secret Keys (មួយជួរ = មួយ Key)..." class="w-full bg-dark-bg border border-dark-border rounded-xl p-2.5 text-white code-font text-xs outline-none focus:border-brand-500 mb-2"></textarea>
                 <button onclick="generateBatch2FA()" class="btn-hover-zoom bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold px-4 py-2 rounded-xl">បង្កើតកូដទាំងអស់</button>
-
                 <div id="batchResultContainer" class="mt-3 hidden overflow-x-auto">
                     <table class="w-full text-left text-xs text-gray-300">
                         <thead class="bg-dark-bg text-gray-400 border-b border-dark-border">
@@ -233,19 +225,17 @@
         </div>
     </div>
 
-    <!-- ================= UID CHECK POPUP MODAL ================= -->
+    <!-- UID CHECK POPUP MODAL -->
     <div id="modal-uid" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md hidden px-4">
         <div class="bg-dark-card border border-dark-border rounded-2xl max-w-xl w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
             <button onclick="closeUidModal()" class="btn-hover-zoom absolute top-4 right-4 text-gray-400 hover:text-white text-lg">
                 <i class="fa-solid fa-xmark"></i>
             </button>
-
             <div class="text-center mb-5">
                 <i class="fa-solid fa-id-badge text-emerald-400 text-3xl mb-2"></i>
                 <h3 class="text-xl font-bold text-white">Facebook UID Live Checker</h3>
-                <p class="text-xs text-gray-400">ពិនិត្យស្ថានភាព UID Facebook ថា Live ឬ Checkpoint/Die ដោយស្វ័យប្រវត្តិ</p>
+                <p class="text-xs text-gray-400">ពិនិត្យស្ថានភាព UID Facebook ថា Live ឬ Checkpoint/Die</p>
             </div>
-
             <div class="grid grid-cols-3 gap-2 text-center mb-4 text-xs font-bold">
                 <div class="bg-dark-bg border border-dark-border p-2.5 rounded-xl">
                     <p class="text-gray-400 text-[10px]">TOTAL</p>
@@ -260,11 +250,9 @@
                     <span id="uidStatDie" class="text-red-400 text-base">0</span>
                 </div>
             </div>
-
             <div>
                 <label class="block text-xs font-bold text-gray-300 mb-1.5">បញ្ចូល UID (មួយជួរ = មួយ UID) ៖</label>
                 <textarea id="uidBatchInput" rows="4" placeholder="100084534123456&#10;100092348572341" class="w-full bg-dark-bg border border-dark-border rounded-xl p-3 text-white code-font text-xs outline-none focus:border-emerald-500 mb-3"></textarea>
-                
                 <div class="flex flex-wrap gap-2">
                     <button id="btnStartUidCheck" onclick="startBatchUidCheck()" class="btn-hover-zoom flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-2.5 rounded-xl flex items-center justify-center gap-1.5">
                         <i class="fa-solid fa-play"></i> ចាប់ផ្តើម Check
@@ -280,7 +268,6 @@
                     </button>
                 </div>
             </div>
-
             <div id="uidResultContainer" class="mt-4 hidden max-h-60 overflow-y-auto border border-dark-border rounded-xl">
                 <table class="w-full text-left text-xs text-gray-300">
                     <thead class="bg-dark-bg text-gray-400 sticky top-0 border-b border-dark-border">
@@ -297,31 +284,27 @@
         </div>
     </div>
 
-    <!-- ================= MY IP ADDRESS POPUP MODAL ================= -->
+    <!-- MY IP ADDRESS POPUP MODAL -->
     <div id="modal-ip" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md hidden px-4">
         <div class="bg-dark-card border border-dark-border rounded-2xl max-w-md w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
             <button onclick="closeIpModal()" class="btn-hover-zoom absolute top-4 right-4 text-gray-400 hover:text-white text-lg">
                 <i class="fa-solid fa-xmark"></i>
             </button>
-
             <div class="text-center mb-5">
                 <i class="fa-solid fa-network-wired text-cyan-400 text-3xl mb-2"></i>
                 <h3 class="text-xl font-bold text-white">My IP Address & Network</h3>
                 <p class="text-xs text-gray-400">ត្រួតពិនិត្យព័ត៌មាន IP Address, ISP និងទីតាំងបណ្តាញរបស់អ្នក</p>
             </div>
-
             <div class="flex gap-2 mb-4">
                 <input type="text" id="customIpInput" placeholder="បញ្ចូល IP ផ្សេងទៀត..." class="flex-grow bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-white code-font text-xs outline-none focus:border-cyan-500">
                 <button id="btnSearchIp" onclick="searchCustomIp()" class="btn-hover-zoom bg-cyan-600 hover:bg-cyan-500 text-white font-bold px-4 py-2 rounded-xl text-xs">
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </button>
             </div>
-
             <div id="ipLoadingState" class="hidden py-8 text-center text-cyan-400 text-xs font-semibold animate-pulse">
                 <i class="fa-solid fa-circle-notch fa-spin text-2xl mb-2 block"></i>
                 កំពុងទាញយកទិន្នន័យ IP Address...
             </div>
-
             <div id="ipContentState" class="space-y-3">
                 <div class="bg-dark-bg border border-dark-border p-4 rounded-xl text-center relative">
                     <span id="displayIpType" class="absolute top-2 right-2 text-[10px] bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded border border-cyan-500/30">IPv4</span>
@@ -332,7 +315,6 @@
                     </button>
                     <p id="ipCopyAlert" class="hidden text-emerald-400 text-[10px] mt-1 font-bold">បានចម្លងជោគជ័យ!</p>
                 </div>
-
                 <div class="bg-dark-bg border border-dark-border p-3.5 rounded-xl space-y-2.5 text-xs">
                     <div class="flex justify-between items-center border-b border-dark-border/60 pb-2">
                         <span class="text-gray-400 flex items-center gap-1.5"><i class="fa-solid fa-tower-broadcast text-cyan-400"></i> ISP / Network:</span>
@@ -367,7 +349,7 @@
         <p>© ២០២៦ Kdeb Tools. Designed for creators & automation workflows.</p>
     </footer>
 
-    <!-- Script Links សម្រាប់ Utilities (នាំចូលពី Folder js) -->
+    <!-- Scripts -->
     <script src="js/2fa.js"></script>
     <script src="js/uid-check.js"></script>
     <script src="js/ip-tool.js"></script>
