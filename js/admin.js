@@ -30,6 +30,19 @@ let tools = [];
 let downloads = [];
 let posts = [];
 
+// ប្រព័ន្ធស្វ័យប្រវត្តិបម្លែងទិន្នន័យប្រភេទចាស់ ទៅប្រភេទថ្មីដើម្បីកុំឱ្យគាំងបង្ហាញទទេ (Auto-Migration)
+function migrateOldDownloads(dataArray) {
+    if (!Array.isArray(dataArray)) return dataArray;
+    return dataArray.map(item => {
+        if (item.category === 'Driver' || item.category === 'APK') {
+            item.category = 'MainFile'; 
+        } else if (item.category === 'Tool') {
+            item.category = 'Patch'; 
+        }
+        return item;
+    });
+}
+
 // ================= 1. AUTHENTICATION & REMEMBER SYSTEM =================
 
 function checkAuthOnLoad() {
@@ -87,7 +100,11 @@ function logout() {
 function loadAdminData() {
     functionsList = JSON.parse(localStorage.getItem('kdeb_functions')) || defaultFunctions;
     tools = JSON.parse(localStorage.getItem('kdeb_pro_tools')) || defaultFeaturedTools;
-    downloads = JSON.parse(localStorage.getItem('kdeb_pro_downloads')) || defaultDownloads;
+    
+    // ចាប់ផ្តើមធ្វើ Migration ទិន្នន័យចាស់ៗ
+    const rawDownloads = JSON.parse(localStorage.getItem('kdeb_pro_downloads')) || defaultDownloads;
+    downloads = migrateOldDownloads(rawDownloads);
+    
     posts = JSON.parse(localStorage.getItem('kdeb_pro_posts')) || defaultPosts;
 }
 
@@ -123,7 +140,42 @@ function syncAll() {
     }
 }
 
-// មុខងារទាញយក YouTube Video ID ឱ្យបានត្រឹមត្រូវបំផុត (ធន់នឹង parameter បន្ថែមដូចជា &t=52s)
+// មុខងារនាំចេញកូដ JSON សម្រាប់យកទៅ Update ក្នុងឯកសារកូដដើម្បីឱ្យទូរស័ព្ទផ្សេងៗឃើញ (Export JSON)
+window.exportDatabaseCode = function() {
+    const data = {
+        functions: functionsList,
+        tools: tools,
+        downloads: downloads,
+        posts: posts
+    };
+    
+    const formattedCode = `
+// ========================================================
+//     កូដ DATABASE ថ្មីរបស់អ្នក (សូមចម្លងយកទៅជំនួសក្នុងឯកសារកូដ)
+// ========================================================
+
+const defaultFunctions = ${JSON.stringify(functionsList, null, 4)};
+
+const defaultFeaturedTools = ${JSON.stringify(tools, null, 4)};
+
+const defaultDownloads = ${JSON.stringify(downloads, null, 4)};
+
+const defaultPosts = ${JSON.stringify(posts, null, 4)};
+    `;
+    
+    // បង្កើតជាលីងទាញយកឯកសារកូដ (.txt)
+    const blob = new Blob([formattedCode], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'kdeb_new_code.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    alert('ទាញយកឯកសារកូដជោគជ័យ! សូមបើកឯកសារ "kdeb_new_code.txt" រួចយកកូដទៅប្តូរជំនួសកន្លែង default ក្នុង main.js & admin.js របស់អ្នក។');
+};
+
 function getYoutubeId(url) {
     try {
         const urlObj = new URL(url);
@@ -137,9 +189,7 @@ function getYoutubeId(url) {
             const v = urlObj.pathname.substring(1).split(/[?#&]/)[0];
             if (v && v.length === 11) return v;
         }
-    } catch (e) {
-        // បើការទាញយកតាម URL API មានបញ្ហា នឹងប្រើ Regex ជំនួសវិញ
-    }
+    } catch (e) {}
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|shorts\/)([^#\&\?]*).*/;
     const match = url.match(regExp);
     return (match && match[2].length === 11) ? match[2] : null;
@@ -147,7 +197,6 @@ function getYoutubeId(url) {
 
 // ================= 3. CRUD FUNCTIONS =================
 
-// FUNCTIONS CRUD
 function saveFunctionGroup(e) {
     e.preventDefault();
     const editId = document.getElementById('fnEditId').value;
@@ -196,7 +245,6 @@ function resetFunctionForm() {
     document.getElementById('fnCancelBtn').classList.add('hidden');
 }
 
-// TOOLS CRUD
 function saveTool(e) {
     e.preventDefault();
     const editId = document.getElementById('toolEditId').value;
@@ -247,7 +295,6 @@ function resetToolForm() {
     document.getElementById('toolCancelBtn').classList.add('hidden');
 }
 
-// DOWNLOADS CRUD
 function saveDownload(e) {
     e.preventDefault();
     const editId = document.getElementById('dlEditId').value;
@@ -303,13 +350,11 @@ function resetDownloadForm() {
     document.getElementById('dlCancelBtn').classList.add('hidden');
 }
 
-// TUTORIALS CRUD (ជាមួយការការពារកំហុស Defensively កាត់បន្ថយការគាំង)
 function savePost(e) {
     e.preventDefault();
     const editId = document.getElementById('postEditId').value;
     const youtubeLink = document.getElementById('pYoutubeLink').value.trim();
     
-    // បង្ការបញ្ហា Error៖ ប្រសិនបើគ្មាន Elements pIcon វានឹងយកតម្លៃ default
     const iconEl = document.getElementById('pIcon');
     const selectedIcon = iconEl ? iconEl.value : 'fa-solid fa-graduation-cap';
     
@@ -371,7 +416,6 @@ function resetPostForm() {
     document.getElementById('postCancelBtn').classList.add('hidden');
 }
 
-// DELETE HANDLER
 function removeItem(type, id) {
     if (!confirm('តើអ្នកពិតជាចង់លុបទិន្នន័យនេះមែនទេ?')) return;
     if (type === 'function') functionsList = functionsList.filter(f => f.id != id);
@@ -394,7 +438,6 @@ function renderAllTabs() {
     if (countDl) countDl.innerText = downloads.length;
     if (countTt) countTt.innerText = posts.length;
 
-    // 1. Functions List
     const listFn = document.getElementById('list-functions');
     if (listFn) {
         listFn.innerHTML = functionsList.map(f => `
@@ -413,7 +456,6 @@ function renderAllTabs() {
         `).join('') || '<p class="text-gray-500 text-xs">គ្មានទិន្នន័យ</p>';
     }
 
-    // 2. Tools List
     const listTl = document.getElementById('list-tools');
     if (listTl) {
         listTl.innerHTML = tools.map(t => `
@@ -430,7 +472,6 @@ function renderAllTabs() {
         `).join('') || '<p class="text-gray-500 text-xs">គ្មានទិន្នន័យ</p>';
     }
 
-    // 3. Downloads List
     const listDl = document.getElementById('list-downloads');
     if (listDl) {
         listDl.innerHTML = downloads.map(d => {
@@ -455,7 +496,6 @@ function renderAllTabs() {
         }).join('') || '<p class="text-gray-500 text-xs">គ្មានទិន្នន័យ</p>';
     }
 
-    // 4. Tutorials List (ជាមួយការបង្ហាញ Preview រូបតំណាងវីដេអូ YouTube)
     const listTt = document.getElementById('list-tutorials');
     if (listTt) {
         listTt.innerHTML = posts.map(p => `

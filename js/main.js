@@ -82,6 +82,19 @@ window.playYoutubeVideo = function(containerId, youtubeId) {
     }
 };
 
+// ប្រព័ន្ធស្វ័យប្រវត្តិបម្លែងទិន្នន័យប្រភេទចាស់ ទៅប្រភេទថ្មីដើម្បីកុំឱ្យគាំងបង្ហាញទទេ (Auto-Migration)
+function migrateOldDownloads(dataArray) {
+    if (!Array.isArray(dataArray)) return dataArray;
+    return dataArray.map(item => {
+        if (item.category === 'Driver' || item.category === 'APK') {
+            item.category = 'MainFile'; 
+        } else if (item.category === 'Tool') {
+            item.category = 'Patch'; 
+        }
+        return item;
+    });
+}
+
 // ប្រព័ន្ធគ្រប់គ្រងប៊ូតុងត្រងប្រភេទឯកសារទាញយក (Download Filtering Logic)
 let currentDlFilter = 'all';
 window.filterDownloads = function(category) {
@@ -142,7 +155,9 @@ function renderPublicData() {
     }
 
     // 3. Render Downloads (គាំទ្រការត្រង Filter តាមប្រភេទ និងការប្រើប្រាស់ Icon)
-    const downloads = JSON.parse(localStorage.getItem('kdeb_pro_downloads')) || defaultDownloads;
+    const rawDownloads = JSON.parse(localStorage.getItem('kdeb_pro_downloads')) || defaultDownloads;
+    const downloads = migrateOldDownloads(rawDownloads); // ដំណើរការ Migration នៅពេល render
+    
     const dlContainer = document.getElementById('customDownloadsList');
     if (dlContainer) {
         const filtered = currentDlFilter === 'all' 
