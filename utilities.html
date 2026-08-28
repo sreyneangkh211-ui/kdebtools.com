@@ -58,12 +58,12 @@
             transform: scale(0.95);
         }
 
-        /* Nav Button Active State (Button Style) */
+        /* Nav Button Active State */
         .nav-btn.nav-active {
             background-color: #4f46e5 !important;
             color: #ffffff !important;
-            box-shadow: 0 4px 14px 0 rgba(99, 102, 241, 0.45) !important;
             border-color: #6366f1 !important;
+            box-shadow: none !important;
         }
 
         /* លុបចោលរបាររំកិល (Hide scrollbar track but keep swipe functional on mobile) */
@@ -87,8 +87,8 @@
                 <span class="text-lg font-extrabold text-white tracking-tight">KDEB <span class="text-brand-400">TOOLS</span></span>
             </a>
 
-            <!-- Menu Navigation (លុបចោល scrollbar) -->
-            <nav class="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-medium overflow-x-auto no-scrollbar py-1">
+            <!-- Menu Navigation (លុបចោល scrollbar និងរៀប Dropdown ថ្មី) -->
+            <nav class="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-medium overflow-x-auto no-scrollbar py-2.5 px-1 md:overflow-visible">
                 <a href="index.html?view=home" class="btn-hover-zoom px-3 py-1.5 rounded-xl border border-transparent hover:border-dark-border hover:bg-dark-card text-gray-300 hover:text-white">Home</a>
                 <a href="index.html?view=automation" class="btn-hover-zoom px-3 py-1.5 rounded-xl border border-transparent hover:border-dark-border hover:bg-dark-card text-gray-300 hover:text-white">Kdeb Automation</a>
                 
@@ -97,17 +97,19 @@
                     <a href="index.html?view=downloads" class="btn-hover-zoom px-3 py-1.5 rounded-xl border border-transparent hover:border-dark-border hover:bg-dark-card text-gray-300 hover:text-white flex items-center gap-1">
                         Downloads <i class="fa-solid fa-chevron-down text-[10px] transition-transform group-hover:rotate-180"></i>
                     </a>
-                    <!-- Dropdown Menu -->
-                    <div class="absolute top-full left-0 mt-1 w-52 rounded-xl bg-dark-card border border-dark-border shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 p-1.5 flex flex-col gap-1">
-                        <a href="index.html?view=downloads&cat=LDPlayer" class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-300 hover:text-white hover:bg-brand-600 transition">
-                            <i class="fa-solid fa-mobile-screen-button text-brand-400"></i> LDPlayer / Emulator
-                        </a>
-                        <a href="index.html?view=downloads&cat=MainFile" class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-300 hover:text-white hover:bg-brand-600 transition">
-                            <i class="fa-solid fa-file-arrow-down text-emerald-400"></i> Main Files
-                        </a>
-                        <a href="index.html?view=downloads&cat=Patch" class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-300 hover:text-white hover:bg-brand-600 transition">
-                            <i class="fa-solid fa-wand-magic-sparkles text-cyan-400"></i> Patch Update
-                        </a>
+                    <!-- Dropdown Menu Wrapper (ដោះស្រាយបញ្ញាញាក់ៗ និងរៀបលំដាប់ថ្មី) -->
+                    <div class="absolute top-full left-0 pt-2 w-52 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                        <div class="bg-dark-card border border-dark-border rounded-xl shadow-2xl p-1.5 flex flex-col gap-1">
+                            <a href="index.html?view=downloads&cat=MainFile" class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-300 hover:text-white hover:bg-brand-600 transition">
+                                <i class="fa-solid fa-file-arrow-down text-emerald-400"></i> Main Files
+                            </a>
+                            <a href="index.html?view=downloads&cat=Patch" class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-300 hover:text-white hover:bg-brand-600 transition">
+                                <i class="fa-solid fa-wand-magic-sparkles text-cyan-400"></i> Patch Update
+                            </a>
+                            <a href="index.html?view=downloads&cat=LDPlayer" class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-300 hover:text-white hover:bg-brand-600 transition">
+                                <i class="fa-solid fa-mobile-screen-button text-brand-400"></i> LDPlayer / Emulator
+                            </a>
+                        </div>
                     </div>
                 </div>
 
@@ -176,12 +178,193 @@
         </div>
     </main>
 
+    <!-- ================= 2FA POPUP MODAL ================= -->
+    <div id="modal-2fa" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md hidden px-4">
+        <div class="bg-dark-card border border-dark-border rounded-2xl max-w-lg w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button onclick="close2FAModal()" class="btn-hover-zoom absolute top-4 right-4 text-gray-400 hover:text-white text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="text-center mb-6">
+                <i class="fa-solid fa-key text-yellow-400 text-3xl mb-2"></i>
+                <h3 class="text-xl font-bold text-white">2FA Live Code Generator</h3>
+                <p class="text-xs text-gray-400">គាំទ្រ Secret Key ពី Facebook, Google, TikTok, Telegram...</p>
+            </div>
+
+            <div class="flex gap-2 mb-4">
+                <input type="text" id="twoFaInput" placeholder="បញ្ចូល Secret Key (ឧ. JBSWY3DPEHPK3PXP)..." class="flex-grow bg-dark-bg border border-dark-border rounded-xl px-3 py-2.5 text-white code-font text-xs outline-none focus:border-yellow-500 uppercase">
+                <button onclick="generate2FACode()" class="btn-hover-zoom bg-yellow-500 hover:bg-yellow-400 text-black font-bold px-4 py-2.5 rounded-xl text-xs">បង្កើតកូដ</button>
+            </div>
+
+            <div id="twoFaResultBox" class="hidden bg-dark-bg border border-dark-border rounded-xl p-4 text-center relative overflow-hidden mb-4">
+                <div class="absolute top-0 left-0 right-0 h-1 bg-dark-border">
+                    <div id="twoFaProgressBar" class="h-full bg-yellow-400 transition-all duration-1000 ease-linear" style="width: 100%;"></div>
+                </div>
+                <div class="flex justify-between items-center text-[10px] text-gray-400 mb-2">
+                    <span><i class="fa-solid fa-circle text-emerald-400 text-[8px] animate-pulse"></i> Real-time Live</span>
+                    <span id="twoFaTimerText" class="font-bold text-yellow-400 code-font">30s</span>
+                </div>
+                <div class="py-1">
+                    <span id="twoFaCodeDisplay" class="text-4xl sm:text-5xl font-black text-white code-font tracking-widest">--- ---</span>
+                </div>
+                <button onclick="copy2FACode()" class="btn-hover-zoom mt-2 bg-dark-card hover:bg-dark-hover border border-dark-border text-white px-4 py-1.5 rounded-lg text-xs font-bold">
+                    <i class="fa-regular fa-copy mr-1"></i> Copy Code
+                </button>
+                <p id="copyAlertMsg" class="hidden text-emerald-400 text-[11px] mt-1 font-semibold">បានចម្លងកូដជោគជ័យ!</p>
+            </div>
+
+            <div class="border-t border-dark-border pt-4">
+                <label class="block text-xs font-bold text-gray-300 mb-1">Batch 2FA (បញ្ចូលច្រើន Key ព្រមគ្នា):</label>
+                <textarea id="batchInput" rows="3" placeholder="Paste Secret Keys (មួយជួរ = មួយ Key)..." class="w-full bg-dark-bg border border-dark-border rounded-xl p-2.5 text-white code-font text-xs outline-none focus:border-brand-500 mb-2"></textarea>
+                <button onclick="generateBatch2FA()" class="btn-hover-zoom bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold px-4 py-2 rounded-xl">បង្កើតកូដទាំងអស់</button>
+
+                <div id="batchResultContainer" class="mt-3 hidden overflow-x-auto">
+                    <table class="w-full text-left text-xs text-gray-300">
+                        <thead class="bg-dark-bg text-gray-400 border-b border-dark-border">
+                            <tr><th class="p-2">#</th><th class="p-2">Key</th><th class="p-2 text-yellow-400">Code</th><th class="p-2 text-right">Action</th></tr>
+                        </thead>
+                        <tbody id="batchTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= UID CHECK POPUP MODAL ================= -->
+    <div id="modal-uid" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md hidden px-4">
+        <div class="bg-dark-card border border-dark-border rounded-2xl max-w-xl w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeUidModal()" class="btn-hover-zoom absolute top-4 right-4 text-gray-400 hover:text-white text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="text-center mb-5">
+                <i class="fa-solid fa-id-badge text-emerald-400 text-3xl mb-2"></i>
+                <h3 class="text-xl font-bold text-white">Facebook UID Live Checker</h3>
+                <p class="text-xs text-gray-400">ពិនិត្យស្ថានភាព UID Facebook ថា Live ឬ Checkpoint/Die ដោយស្វ័យប្រវត្តិ</p>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 text-center mb-4 text-xs font-bold">
+                <div class="bg-dark-bg border border-dark-border p-2.5 rounded-xl">
+                    <p class="text-gray-400 text-[10px]">TOTAL</p>
+                    <span id="uidStatTotal" class="text-white text-base">0</span>
+                </div>
+                <div class="bg-emerald-500/10 border border-emerald-500/30 p-2.5 rounded-xl">
+                    <p class="text-emerald-400 text-[10px]">LIVE 🟢</p>
+                    <span id="uidStatLive" class="text-emerald-400 text-base">0</span>
+                </div>
+                <div class="bg-red-500/10 border border-red-500/30 p-2.5 rounded-xl">
+                    <p class="text-red-400 text-[10px]">DIE 🔴</p>
+                    <span id="uidStatDie" class="text-red-400 text-base">0</span>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-gray-300 mb-1.5">បញ្ចូល UID (មួយជួរ = មួយ UID) ៖</label>
+                <textarea id="uidBatchInput" rows="4" placeholder="100084534123456&#10;100092348572341" class="w-full bg-dark-bg border border-dark-border rounded-xl p-3 text-white code-font text-xs outline-none focus:border-emerald-500 mb-3"></textarea>
+                
+                <div class="flex flex-wrap gap-2">
+                    <button id="btnStartUidCheck" onclick="startBatchUidCheck()" class="btn-hover-zoom flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-2.5 rounded-xl flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-play"></i> ចាប់ផ្តើម Check
+                    </button>
+                    <button id="btnStopUidCheck" onclick="stopUidChecking()" class="btn-hover-zoom hidden flex-1 bg-red-600 hover:bg-red-500 text-white font-bold text-xs py-2.5 rounded-xl flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-stop"></i> បញ្ឈប់
+                    </button>
+                    <button onclick="copyAllLiveUIDs()" class="btn-hover-zoom bg-dark-bg hover:bg-emerald-500 hover:text-black border border-dark-border text-emerald-400 font-bold text-xs px-3.5 py-2.5 rounded-xl flex items-center gap-1">
+                        <i class="fa-solid fa-copy"></i> Copy Live
+                    </button>
+                    <button onclick="clearUidData()" class="btn-hover-zoom bg-dark-bg hover:bg-dark-hover border border-dark-border text-gray-400 text-xs px-3 py-2.5 rounded-xl">
+                        សម្អាត
+                    </button>
+                </div>
+            </div>
+
+            <div id="uidResultContainer" class="mt-4 hidden max-h-60 overflow-y-auto border border-dark-border rounded-xl">
+                <table class="w-full text-left text-xs text-gray-300">
+                    <thead class="bg-dark-bg text-gray-400 sticky top-0 border-b border-dark-border">
+                        <tr>
+                            <th class="p-2.5">#</th>
+                            <th class="p-2.5">UID Profile</th>
+                            <th class="p-2.5">ស្ថានភាព</th>
+                            <th class="p-2.5 text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="uidTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MY IP ADDRESS POPUP MODAL ================= -->
+    <div id="modal-ip" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md hidden px-4">
+        <div class="bg-dark-card border border-dark-border rounded-2xl max-w-md w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeIpModal()" class="btn-hover-zoom absolute top-4 right-4 text-gray-400 hover:text-white text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="text-center mb-5">
+                <i class="fa-solid fa-network-wired text-cyan-400 text-3xl mb-2"></i>
+                <h3 class="text-xl font-bold text-white">My IP Address & Network</h3>
+                <p class="text-xs text-gray-400">ត្រួតពិនិត្យព័ត៌មាន IP Address, ISP និងទីតាំងបណ្តាញរបស់អ្នក</p>
+            </div>
+
+            <div class="flex gap-2 mb-4">
+                <input type="text" id="customIpInput" placeholder="បញ្ចូល IP ផ្សេងទៀត..." class="flex-grow bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-white code-font text-xs outline-none focus:border-cyan-500">
+                <button id="btnSearchIp" onclick="searchCustomIp()" class="btn-hover-zoom bg-cyan-600 hover:bg-cyan-500 text-white font-bold px-4 py-2 rounded-xl text-xs">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </div>
+
+            <div id="ipLoadingState" class="hidden py-8 text-center text-cyan-400 text-xs font-semibold animate-pulse">
+                <i class="fa-solid fa-circle-notch fa-spin text-2xl mb-2 block"></i>
+                កំពុងទាញយកទិន្នន័យ IP Address...
+            </div>
+
+            <div id="ipContentState" class="space-y-3">
+                <div class="bg-dark-bg border border-dark-border p-4 rounded-xl text-center relative">
+                    <span id="displayIpType" class="absolute top-2 right-2 text-[10px] bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded border border-cyan-500/30">IPv4</span>
+                    <p class="text-[11px] text-gray-400 mb-1">YOUR PUBLIC IP</p>
+                    <h2 id="displayIpAddress" class="text-2xl font-black text-cyan-400 code-font tracking-wide">---.---.---.---</h2>
+                    <button onclick="copyCurrentIp()" class="btn-hover-zoom mt-2 text-xs bg-dark-card hover:bg-dark-hover border border-dark-border px-3 py-1 rounded-lg text-gray-300 font-semibold">
+                        <i class="fa-regular fa-copy mr-1"></i> Copy IP
+                    </button>
+                    <p id="ipCopyAlert" class="hidden text-emerald-400 text-[10px] mt-1 font-bold">បានចម្លងជោគជ័យ!</p>
+                </div>
+
+                <div class="bg-dark-bg border border-dark-border p-3.5 rounded-xl space-y-2.5 text-xs">
+                    <div class="flex justify-between items-center border-b border-dark-border/60 pb-2">
+                        <span class="text-gray-400 flex items-center gap-1.5"><i class="fa-solid fa-tower-broadcast text-cyan-400"></i> ISP / Network:</span>
+                        <span id="displayIsp" class="text-white font-semibold text-right truncate max-w-[180px]">---</span>
+                    </div>
+                    <div class="flex justify-between items-center border-b border-dark-border/60 pb-2">
+                        <span class="text-gray-400 flex items-center gap-1.5"><i class="fa-solid fa-earth-americas text-cyan-400"></i> ប្រទេស:</span>
+                        <span class="text-white font-semibold flex items-center gap-1.5">
+                            <img id="displayFlagImg" src="" class="w-4 h-3 object-cover rounded hidden">
+                            <span id="displayCountry">---</span>
+                        </span>
+                    </div>
+                    <div class="flex justify-between items-center border-b border-dark-border/60 pb-2">
+                        <span class="text-gray-400 flex items-center gap-1.5"><i class="fa-solid fa-location-dot text-cyan-400"></i> ទីក្រុង / តំបន់:</span>
+                        <span id="displayCity" class="text-white font-semibold">---</span>
+                    </div>
+                    <div class="flex justify-between items-center border-b border-dark-border/60 pb-2">
+                        <span class="text-gray-400 flex items-center gap-1.5"><i class="fa-solid fa-clock text-cyan-400"></i> Timezone:</span>
+                        <span id="displayTimezone" class="text-white font-mono">---</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400 flex items-center gap-1.5"><i class="fa-solid fa-map-pin text-cyan-400"></i> Coordinates:</span>
+                        <span id="displayCoords" class="text-gray-300 font-mono text-[11px]">---, ---</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- FOOTER -->
     <footer class="bg-dark-card border-t border-dark-border py-6 text-center text-xs text-gray-500 mt-auto">
         <p>© ២០២៦ Kdeb Tools. Designed for creators & automation workflows.</p>
     </footer>
 
-    <!-- Script Links សម្រាប់ Utilities -->
+    <!-- Script Links សម្រាប់ Utilities (នាំចូលពី Folder js) -->
     <script src="js/2fa.js"></script>
     <script src="js/uid-check.js"></script>
     <script src="js/ip-tool.js"></script>

@@ -63,12 +63,12 @@
             transform: scale(0.95);
         }
 
-        /* Nav Button Active State (Button Style) */
+        /* Nav Button Active State */
         .nav-btn.nav-active {
             background-color: #4f46e5 !important;
             color: #ffffff !important;
-            box-shadow: 0 4px 14px 0 rgba(99, 102, 241, 0.45) !important;
             border-color: #6366f1 !important;
+            box-shadow: none !important;
         }
         
         .glow { box-shadow: 0 0 35px -5px rgba(99, 102, 241, 0.25); }
@@ -94,27 +94,30 @@
                 <span class="text-lg font-extrabold text-white tracking-tight">KDEB <span class="text-brand-400">TOOLS</span></span>
             </div>
 
-            <!-- Main Menu Buttons with No-Scrollbar -->
-            <nav class="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-medium overflow-x-auto no-scrollbar py-1">
+            <!-- Main Menu Buttons -->
+            <nav class="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-medium overflow-x-auto no-scrollbar py-2.5 px-1 md:overflow-visible">
                 <button onclick="navigateTo('home')" id="nav-home" class="nav-btn btn-hover-zoom px-3 py-1.5 rounded-xl border border-transparent hover:border-dark-border hover:bg-dark-card text-gray-300 hover:text-white">Home</button>
                 <button onclick="navigateTo('automation')" id="nav-automation" class="nav-btn btn-hover-zoom px-3 py-1.5 rounded-xl border border-transparent hover:border-dark-border hover:bg-dark-card text-gray-300 hover:text-white">Kdeb Automation</button>
                 
-                <!-- Downloads Hover Dropdown Container -->
+                <!-- Downloads Hover Dropdown Container (ដោះស្រាយបញ្ហាគាំងលោតញាក់ៗ និងរៀបលំដាប់ថ្មី) -->
                 <div class="relative group">
                     <button onclick="navigateTo('downloads')" id="nav-downloads" class="nav-btn btn-hover-zoom px-3 py-1.5 rounded-xl border border-transparent hover:border-dark-border hover:bg-dark-card text-gray-300 hover:text-white flex items-center gap-1">
                         Downloads <i class="fa-solid fa-chevron-down text-[10px] transition-transform group-hover:rotate-180"></i>
                     </button>
-                    <!-- Dropdown Menu -->
-                    <div class="absolute top-full left-0 mt-1 w-52 rounded-xl bg-dark-card border border-dark-border shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 p-1.5 flex flex-col gap-1">
-                        <a href="index.html?view=downloads&cat=LDPlayer" class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-300 hover:text-white hover:bg-brand-600 transition">
-                            <i class="fa-solid fa-mobile-screen-button text-brand-400"></i> LDPlayer / Emulator
-                        </a>
-                        <a href="index.html?view=downloads&cat=MainFile" class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-300 hover:text-white hover:bg-brand-600 transition">
-                            <i class="fa-solid fa-file-arrow-down text-emerald-400"></i> Main Files
-                        </a>
-                        <a href="index.html?view=downloads&cat=Patch" class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-300 hover:text-white hover:bg-brand-600 transition">
-                            <i class="fa-solid fa-wand-magic-sparkles text-cyan-400"></i> Patch Update
-                        </a>
+                    <!-- Dropdown Menu Wrapper (ចាប់ផ្តើមពី top-full គ្មានចន្លោះទំនេរ ការពារការដាច់ Hover) -->
+                    <div class="absolute top-full left-0 pt-2 w-52 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                        <!-- Styled Container -->
+                        <div class="bg-dark-card border border-dark-border rounded-xl shadow-2xl p-1.5 flex flex-col gap-1">
+                            <a href="index.html?view=downloads&cat=MainFile" class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-300 hover:text-white hover:bg-brand-600 transition">
+                                <i class="fa-solid fa-file-arrow-down text-emerald-400"></i> Main Files
+                            </a>
+                            <a href="index.html?view=downloads&cat=Patch" class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-300 hover:text-white hover:bg-brand-600 transition">
+                                <i class="fa-solid fa-wand-magic-sparkles text-cyan-400"></i> Patch Update
+                            </a>
+                            <a href="index.html?view=downloads&cat=LDPlayer" class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-300 hover:text-white hover:bg-brand-600 transition">
+                                <i class="fa-solid fa-mobile-screen-button text-brand-400"></i> LDPlayer / Emulator
+                            </a>
+                        </div>
                     </div>
                 </div>
 
@@ -190,7 +193,7 @@
             </div>
         </section>
 
-        <!-- PAGE 3: DOWNLOADS CENTER -->
+        <!-- PAGE 3: DOWNLOADS CENTER (លុបចោល All Files និងតម្រៀបទីតាំងថ្មី) -->
         <section id="view-downloads" class="page-view hidden py-10">
             <div class="max-w-5xl mx-auto px-4">
                 <h1 class="text-3xl font-extrabold text-white text-center mb-4">Downloads Center</h1>
@@ -198,10 +201,9 @@
                 
                 <!-- Category Filter Pills -->
                 <div class="flex flex-wrap justify-center gap-2 mb-8 text-xs font-semibold" id="downloadFilters">
-                    <button onclick="filterDownloads('all')" id="btn-dl-all" class="px-4 py-1.5 rounded-full bg-brand-600 text-white border border-brand-500 transition">All Files</button>
-                    <button onclick="filterDownloads('LDPlayer')" id="btn-dl-LDPlayer" class="px-4 py-1.5 rounded-full bg-dark-card text-gray-400 hover:text-white border border-dark-border transition">LDPlayer / Emulator</button>
-                    <button onclick="filterDownloads('MainFile')" id="btn-dl-MainFile" class="px-4 py-1.5 rounded-full bg-dark-card text-gray-400 hover:text-white border border-dark-border transition">Main Files</button>
+                    <button onclick="filterDownloads('MainFile')" id="btn-dl-MainFile" class="px-4 py-1.5 rounded-full bg-brand-600 text-white border border-brand-500 transition">Main Files</button>
                     <button onclick="filterDownloads('Patch')" id="btn-dl-Patch" class="px-4 py-1.5 rounded-full bg-dark-card text-gray-400 hover:text-white border border-dark-border transition">Patch Update</button>
+                    <button onclick="filterDownloads('LDPlayer')" id="btn-dl-LDPlayer" class="px-4 py-1.5 rounded-full bg-dark-card text-gray-400 hover:text-white border border-dark-border transition">LDPlayer / Emulator</button>
                 </div>
 
                 <div id="customDownloadsList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
@@ -216,7 +218,7 @@
             </div>
         </section>
 
-        <!-- PAGE 5: CONTACT SUPPORT (បានធ្វើបច្ចុប្បន្នភាពតំណភ្ជាប់ថ្មីរួចរាល់) -->
+        <!-- PAGE 5: CONTACT SUPPORT -->
         <section id="view-contact" class="page-view hidden py-12 text-center">
             <div class="max-w-3xl mx-auto px-4">
                 <h1 class="text-3xl font-extrabold text-white mb-2">Contact Support</h1>
