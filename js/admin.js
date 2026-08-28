@@ -3,6 +3,10 @@
 //       (ប្រព័ន្ធ Logic, Auto-Login & CRUD របស់ Admin)
 // =========================================================
 
+// កំណត់ព័ត៌មាន Cloud Database របស់អ្នក (JSONbin.io)
+const BIN_ID = "6a917cb3da38895dfe1c169c";
+const API_KEY = "$2a$10$3jKyJxhLrAn/3gCKlwjvSOtBFGKwfnUDm6/J9E1BeuJVel/z2hTDy";
+
 const defaultFunctions = [
     { id: 1, title: "Account Manage", icon: "fa-solid fa-user-shield", items: ["Auto switch Profiles", "Check Live / Die UID", "Auto solve Captcha & 2FA", "Interactions Feed & Reels"] },
     { id: 2, title: "Page & Post", icon: "fa-solid fa-share-from-square", items: ["Auto post Reels & Videos", "Auto comment & interaction", "Schedule Post (Time/Date)", "Auto Story with link"] },
@@ -61,7 +65,6 @@ function showDashboard() {
     if (dashScr) dashScr.classList.remove('hidden');
 
     loadAdminData();
-    renderAllTabs();
 }
 
 function showLoginScreen() {
@@ -95,17 +98,42 @@ function logout() {
     if (document.getElementById('passInput')) document.getElementById('passInput').value = '';
 }
 
-// ================= 2. DATA MANAGEMENT =================
+// ================= 2. DATA MANAGEMENT (ទាញយកទិន្នន័យពី Cloud) =================
 
-function loadAdminData() {
-    functionsList = JSON.parse(localStorage.getItem('kdeb_functions')) || defaultFunctions;
-    tools = JSON.parse(localStorage.getItem('kdeb_pro_tools')) || defaultFeaturedTools;
-    
-    // ចាប់ផ្តើមធ្វើ Migration ទិន្នន័យចាស់ៗ
-    const rawDownloads = JSON.parse(localStorage.getItem('kdeb_pro_downloads')) || defaultDownloads;
-    downloads = migrateOldDownloads(rawDownloads);
-    
-    posts = JSON.parse(localStorage.getItem('kdeb_pro_posts')) || defaultPosts;
+async function loadAdminData() {
+    // បង្ហាញពាក្យ Loading លើប៊ូតុងអាប់ដេតបណ្តោះអាសន្ន
+    const listFn = document.getElementById('list-functions');
+    if (listFn) listFn.innerHTML = '<p class="text-cyan-400 text-xs animate-pulse">⏳ កំពុងទាញយកទិន្នន័យពី Cloud...</p>';
+
+    try {
+        const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+            method: 'GET',
+            headers: {
+                'X-Master-Key': API_KEY
+            }
+        });
+        if (response.ok) {
+            const result = await response.json();
+            const record = result.record;
+            functionsList = record.functions || defaultFunctions;
+            tools = record.tools || defaultFeaturedTools;
+            downloads = migrateOldDownloads(record.downloads || defaultDownloads);
+            posts = record.posts || defaultPosts;
+            renderAllTabs();
+        } else {
+            loadDefaults();
+        }
+    } catch (err) {
+        loadDefaults();
+    }
+}
+
+function loadDefaults() {
+    functionsList = defaultFunctions;
+    tools = defaultFeaturedTools;
+    downloads = defaultDownloads;
+    posts = defaultPosts;
+    renderAllTabs();
 }
 
 function switchAdminTab(tabName) {
@@ -126,56 +154,39 @@ function autoFillFileInfo(input) {
     }
 }
 
-function syncAll() {
-    try {
-        localStorage.setItem('kdeb_functions', JSON.stringify(functionsList));
-        localStorage.setItem('kdeb_pro_tools', JSON.stringify(tools));
-        localStorage.setItem('kdeb_pro_downloads', JSON.stringify(downloads));
-        localStorage.setItem('kdeb_pro_posts', JSON.stringify(posts));
-        renderAllTabs();
-        return true;
-    } catch (err) {
-        alert('⚠️ ទំហំផ្ទុកពេញ (Storage Quota Exceeded)! សូមកាត់បន្ថយការផ្ទុកឯកសារធំៗ។');
-        return false;
-    }
-}
-
-// មុខងារនាំចេញកូដ JSON សម្រាប់យកទៅ Update ក្នុងឯកសារកូដដើម្បីឱ្យទូរស័ព្ទផ្សេងៗឃើញ (Export JSON)
-window.exportDatabaseCode = function() {
-    const data = {
+// រក្សាទុកទិន្នន័យទៅកាន់ Cloud JSONbin.io
+async function syncAll() {
+    const dataToSave = {
         functions: functionsList,
         tools: tools,
         downloads: downloads,
         posts: posts
     };
-    
-    const formattedCode = `
-// ========================================================
-//     កូដ DATABASE ថ្មីរបស់អ្នក (សូមចម្លងយកទៅជំនួសក្នុងឯកសារកូដ)
-// ========================================================
 
-const defaultFunctions = ${JSON.stringify(functionsList, null, 4)};
+    try {
+        const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Master-Key': API_KEY
+            },
+            body: JSON.stringify(dataToSave)
+        });
+        
+        if (response.ok) {
+            renderAllTabs();
+            return true;
+        } else {
+            alert('⚠️ រក្សាទុកទៅ Cloud បរាជ័យ! សូមពិនិត្យមើល API Key ឬ Bin ID។');
+            return false;
+        }
+    } catch (err) {
+        alert('⚠️ មិនអាចភ្ជាប់ទៅកាន់ Cloud បានទេ! សូមពិនិត្យមើលអ៊ីនធឺណិតរបស់អ្នក។');
+        return false;
+    }
+}
 
-const defaultFeaturedTools = ${JSON.stringify(tools, null, 4)};
-
-const defaultDownloads = ${JSON.stringify(downloads, null, 4)};
-
-const defaultPosts = ${JSON.stringify(posts, null, 4)};
-    `;
-    
-    // បង្កើតជាលីងទាញយកឯកសារកូដ (.txt)
-    const blob = new Blob([formattedCode], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'kdeb_new_code.txt';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    alert('ទាញយកឯកសារកូដជោគជ័យ! សូមបើកឯកសារ "kdeb_new_code.txt" រួចយកកូដទៅប្តូរជំនួសកន្លែង default ក្នុង main.js & admin.js របស់អ្នក។');
-};
-
+// មុខងារទាញយក YouTube Video ID ឱ្យបានត្រឹមត្រូវបំផុត (ធន់នឹង parameter បន្ថែមដូចជា &t=52s)
 function getYoutubeId(url) {
     try {
         const urlObj = new URL(url);

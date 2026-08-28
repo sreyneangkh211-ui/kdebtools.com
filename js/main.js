@@ -3,6 +3,10 @@
 //       (ប្រព័ន្ធ Router ប្តូរទំព័រ Clean URL & Render ទិន្នន័យ)
 // =========================================================
 
+// កំណត់ព័ត៌មាន Cloud Database របស់អ្នក (JSONbin.io)
+const BIN_ID = "6a917cb3da38895dfe1c169c";
+const API_KEY = "$2a$10$3jKyJxhLrAn/3gCKlwjvSOtBFGKwfnUDm6/J9E1BeuJVel/z2hTDy";
+
 // ROUTER: ប្តូរទំព័រ (Clean URL គ្មានសញ្ញា # និងប្រើ Button Style)
 function navigateTo(pageId, pushToHistory = true) {
     const validPages = ['home', 'automation', 'downloads', 'tutorials', 'contact'];
@@ -100,7 +104,6 @@ let currentDlFilter = 'all';
 window.filterDownloads = function(category) {
     currentDlFilter = category;
     
-    // កំណត់ស្ទីលប៊ូតុងសកម្មភាព (Active/Inactive CSS)
     const categories = ['all', 'LDPlayer', 'MainFile', 'Patch'];
     categories.forEach(cat => {
         const btn = document.getElementById(`btn-dl-${cat}`);
@@ -116,10 +119,34 @@ window.filterDownloads = function(category) {
     renderPublicData();
 };
 
-// RENDER DATA
-function renderPublicData() {
+// RENDER DATA (ទាញយកទិន្នន័យចុងក្រោយបង្អស់ពី Cloud មកបង្ហាញលើ UI ឱ្យទូរស័ព្ទទាំងអស់មើលឃើញដូចគ្នា)
+async function renderPublicData() {
+    let functionsList = defaultFunctions;
+    let tools = defaultFeaturedTools;
+    let downloads = defaultDownloads;
+    let posts = defaultPosts;
+
+    try {
+        const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+            method: 'GET',
+            headers: {
+                'X-Master-Key': API_KEY
+            }
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            const record = result.record;
+            functionsList = record.functions || defaultFunctions;
+            tools = record.tools || defaultFeaturedTools;
+            downloads = migrateOldDownloads(record.downloads || defaultDownloads);
+            posts = record.posts || defaultPosts;
+        }
+    } catch (err) {
+        // បើអ៊ីនធឺណិតមានបញ្ហា វានឹងយករូបមន្តលំនាំដើម (Defaults) មកបង្ហាញ
+    }
+
     // 1. Render Functions
-    const functionsList = JSON.parse(localStorage.getItem('kdeb_functions')) || defaultFunctions;
     const fnContainer = document.getElementById('importantFunctionsGrid');
     if (fnContainer) {
         fnContainer.innerHTML = functionsList.map(fn => `
@@ -135,7 +162,6 @@ function renderPublicData() {
     }
 
     // 2. Render Featured Tools (Home)
-    const tools = JSON.parse(localStorage.getItem('kdeb_pro_tools')) || defaultFeaturedTools;
     const toolsContainer = document.getElementById('homeFeaturedToolsGrid');
     if (toolsContainer) {
         toolsContainer.innerHTML = tools.map((t) => `
@@ -155,9 +181,6 @@ function renderPublicData() {
     }
 
     // 3. Render Downloads (គាំទ្រការត្រង Filter តាមប្រភេទ និងការប្រើប្រាស់ Icon)
-    const rawDownloads = JSON.parse(localStorage.getItem('kdeb_pro_downloads')) || defaultDownloads;
-    const downloads = migrateOldDownloads(rawDownloads); // ដំណើរការ Migration នៅពេល render
-    
     const dlContainer = document.getElementById('customDownloadsList');
     if (dlContainer) {
         const filtered = currentDlFilter === 'all' 
@@ -200,7 +223,6 @@ function renderPublicData() {
     }
 
     // 4. Render Tutorials (ទម្រង់ Interactive Youtube Card ដូចក្នុងវីដេអូ)
-    const posts = JSON.parse(localStorage.getItem('kdeb_pro_posts')) || defaultPosts;
     const postContainer = document.getElementById('customPostsList');
     if (postContainer) {
         postContainer.innerHTML = posts.map(p => {
