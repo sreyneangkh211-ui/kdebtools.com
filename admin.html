@@ -9,7 +9,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kdeb Tools - Admin Control Center</title>
-    <link rel="icon" type="image/png" href="image/Kdeb Tool.png">
+    
+    <!-- Favicon Icon -->
+    <link rel="icon" type="image/x-icon" href="image/closed.ico">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -38,13 +40,24 @@
 </head>
 <body class="min-h-screen flex flex-col justify-center">
 
-    <!-- ================= LOGIN SCREEN ================= -->
+    <!-- ================= LOGIN SCREEN (Username & Password) ================= -->
     <div id="loginScreen" class="max-w-md w-full mx-auto p-6">
         <div class="bg-dark-card border border-dark-border rounded-2xl p-8 shadow-2xl text-center">
-            <img src="image/Kdeb Tool.png" alt="Logo" class="h-12 w-auto mx-auto mb-4" onerror="this.style.display='none'">
+            <img src="image/closed.ico" alt="Logo" class="h-12 w-auto mx-auto mb-4" onerror="this.style.display='none'">
             <h2 class="text-xl font-bold text-white">ផ្ទាំងគ្រប់គ្រង Admin Kdeb Tools</h2>
-            <p class="text-xs text-gray-400 mt-1 mb-6">សូមបញ្ចូល Password ដើម្បីចូល Dashboard</p>
-            <input type="password" id="passInput" onkeypress="if(event.key === 'Enter') handleLogin()" placeholder="លេខសម្ងាត់ (admin123)" class="w-full bg-dark-bg border border-dark-border text-white rounded-xl p-3 text-sm outline-none focus:border-brand-500 mb-4">
+            <p class="text-xs text-gray-400 mt-1 mb-6">សូមបញ្ចូល Username និង Password ដើម្បីចូល Dashboard</p>
+            
+            <div class="space-y-3 mb-4 text-left">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 mb-1">ឈ្មោះគណនី (Username)</label>
+                    <input type="text" id="usernameInput" onkeypress="if(event.key === 'Enter') document.getElementById('passInput').focus()" placeholder="បញ្ចូល Username..." class="w-full bg-dark-bg border border-dark-border text-white rounded-xl p-3 text-sm outline-none focus:border-brand-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 mb-1">លេខសម្ងាត់ (Password)</label>
+                    <input type="password" id="passInput" onkeypress="if(event.key === 'Enter') handleLogin()" placeholder="បញ្ចូល Password..." class="w-full bg-dark-bg border border-dark-border text-white rounded-xl p-3 text-sm outline-none focus:border-brand-500">
+                </div>
+            </div>
+
             <button onclick="handleLogin()" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-semibold py-3 rounded-xl text-sm transition shadow-lg shadow-brand-500/20">
                 ផ្ទៀងផ្ទាត់ & ចូល Dashboard
             </button>
@@ -58,7 +71,7 @@
         <!-- Header -->
         <div class="flex flex-col sm:flex-row items-center justify-between bg-dark-card p-5 rounded-2xl border border-dark-border mb-6 gap-4">
             <div class="flex items-center gap-3">
-                <img src="image/Kdeb Tool.png" alt="Logo" class="h-10 w-auto" onerror="this.style.display='none'">
+                <img src="image/closed.ico" alt="Logo" class="h-10 w-auto" onerror="this.style.display='none'">
                 <div>
                     <h1 class="text-xl font-bold text-white">Kdeb Tools Manager</h1>
                     <p class="text-xs text-gray-400">ប្រព័ន្ធគ្រប់គ្រង បន្ថែម និងកែសម្រួលទិន្នន័យវេបសាយ Kdeb Tools</p>
@@ -178,9 +191,8 @@
                         <label class="block text-gray-300 font-semibold mb-1">ប្រភេទ Category</label>
                         <select id="dCategory" class="w-full bg-dark-bg border border-dark-border rounded-lg p-2.5 text-white outline-none focus:border-emerald-500">
                             <option value="LDPlayer">LDPlayer / Emulator</option>
-                            <option value="Driver">GPU / System Driver</option>
-                            <option value="APK">APK Clone & App</option>
-                            <option value="Tool">Tool / Zip Package</option>
+                            <option value="MainFile">Main Files</option>
+                            <option value="Patch">Patch Update</option>
                         </select>
                     </div>
                     <div>
@@ -209,19 +221,22 @@
                 </div>
                 <form id="postForm" onsubmit="savePost(event)" class="space-y-3.5 text-xs">
                     <input type="hidden" id="postEditId">
-                    <input type="hidden" id="postExistingImage">
                     <div>
                         <label class="block text-gray-300 font-semibold mb-1">ចំណងជើងមេរៀន</label>
                         <input type="text" id="pTitle" placeholder="ចំណងជើង..." required class="w-full bg-dark-bg border border-dark-border rounded-lg p-2.5 text-white outline-none focus:border-cyan-500">
                     </div>
                     <div>
-                        <label class="block text-gray-300 font-semibold mb-1">Upload រូបភាព Thumbnail</label>
-                        <input type="file" id="pImageFile" accept="image/*" class="w-full bg-dark-bg border border-dark-border rounded-lg p-2 text-gray-400 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:bg-cyan-600 file:text-white mb-1">
-                        <input type="url" id="pImageLink" placeholder="ឬដាក់ Link រូបភាព..." class="w-full bg-dark-bg border border-dark-border rounded-lg p-2.5 text-white outline-none focus:border-cyan-500">
+                        <label class="block text-gray-300 font-semibold mb-1">លីងវីដេអូ YouTube (YouTube Link)</label>
+                        <input type="url" id="pYoutubeLink" placeholder="https://www.youtube.com/watch?v=... ឬ https://youtu.be/..." required class="w-full bg-dark-bg border border-dark-border rounded-lg p-2.5 text-white outline-none focus:border-cyan-500">
                     </div>
                     <div>
-                        <label class="block text-gray-300 font-semibold mb-1">ខ្លឹមសារ</label>
-                        <textarea id="pContent" rows="4" placeholder="ពិពណ៌នាសង្ខេប..." required class="w-full bg-dark-bg border border-dark-border rounded-lg p-2.5 text-white outline-none focus:border-cyan-500"></textarea>
+                        <label class="block text-gray-300 font-semibold mb-1">ប្រភេទ / Icon បង្ហាញ (Type)</label>
+                        <select id="pIcon" class="w-full bg-dark-bg border border-dark-border rounded-lg p-2.5 text-white outline-none focus:border-cyan-500">
+                            <option value="fa-solid fa-download">📥 ដំឡើង (Installation)</option>
+                            <option value="fa-solid fa-key">🔑 អាជ្ញាប័ណ្ណ (License)</option>
+                            <option value="fa-solid fa-graduation-cap">🎓 ការប្រើប្រាស់ (Usage Guide)</option>
+                            <option value="fa-solid fa-gears">⚙️ ការកំណត់ (Settings)</option>
+                        </select>
                     </div>
                     <button type="submit" id="postSubmitBtn" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-semibold py-2.5 rounded-lg transition mt-2">+ បង្ហោះ Tutorial</button>
                 </form>
@@ -233,7 +248,7 @@
         </div>
     </div>
 
-    <!-- Script Link (តភ្ជាប់តាម Folder js/) -->
+    <!-- Script Link -->
     <script src="js/admin.js"></script>
 </body>
 </html>
