@@ -1,6 +1,6 @@
 // =========================================================
 //                   FILE: js/main.js
-//       (ប្រព័ន្ធ Router, SEO Title & Direct Download Support)
+//       (ប្រព័ន្ធ Router, SEO Title & Dynamic Contact Support)
 // =========================================================
 
 const BIN_ID = "6a917cb3da38895dfe1c169c";
@@ -89,26 +89,61 @@ window.playYoutubeVideo = function(containerId, youtubeId) {
 function migrateOldDownloads(dataArray) {
     if (!Array.isArray(dataArray)) return [];
     return dataArray.map(item => {
-        if (item.category === 'Driver') {
-            item.category = 'MainFile'; 
-        } else if (item.category === 'Tool') {
-            item.category = 'Patch'; 
-        }
+        if (item.category === 'Driver') item.category = 'MainFile'; 
+        else if (item.category === 'Tool') item.category = 'Patch'; 
         return item;
     });
+}
+
+function getFunctionBoxTheme(icon, index) {
+    const palette = [
+        { text: 'text-cyan-400', badge: 'bg-cyan-500/10 text-cyan-300 border-cyan-500/20', bullet: 'text-cyan-400' },
+        { text: 'text-yellow-400', badge: 'bg-yellow-500/10 text-yellow-300 border-yellow-500/20', bullet: 'text-yellow-400' },
+        { text: 'text-emerald-400', badge: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/20', bullet: 'text-emerald-400' },
+        { text: 'text-purple-400', badge: 'bg-purple-500/10 text-purple-300 border-purple-500/20', bullet: 'text-purple-400' },
+        { text: 'text-rose-400', badge: 'bg-rose-500/10 text-rose-300 border-rose-500/20', bullet: 'text-rose-400' },
+        { text: 'text-orange-400', badge: 'bg-orange-500/10 text-orange-300 border-orange-500/20', bullet: 'text-orange-400' }
+    ];
+
+    if (icon) {
+        if (icon.includes('mobile') || icon.includes('phone')) return palette[0];
+        if (icon.includes('shield') || icon.includes('user')) return palette[1];
+        if (icon.includes('share') || icon.includes('paper-plane')) return palette[2];
+        if (icon.includes('robot') || icon.includes('wand')) return palette[3];
+        if (icon.includes('video') || icon.includes('play')) return palette[4];
+        if (icon.includes('gear') || icon.includes('wrench')) return palette[5];
+    }
+    return palette[index % palette.length];
+}
+
+// Styling សម្រាប់ប្រភេទ Contact Cards
+function getContactTheme(icon) {
+    if (icon.includes('telegram')) return { iconColor: 'text-[#229ED9]', iconBg: 'bg-[#229ED9]/10 border-[#229ED9]/20', btnBg: 'bg-[#229ED9] hover:bg-[#1f8ec4] text-white' };
+    if (icon.includes('youtube')) return { iconColor: 'text-[#FF0000]', iconBg: 'bg-red-500/10 border-red-500/20', btnBg: 'bg-red-600 hover:bg-red-500 text-white' };
+    if (icon.includes('facebook')) return { iconColor: 'text-[#1877F2]', iconBg: 'bg-blue-600/10 border-blue-600/20', btnBg: 'bg-[#1877F2] hover:bg-blue-600 text-white' };
+    if (icon.includes('tiktok')) return { iconColor: 'text-pink-400', iconBg: 'bg-pink-500/10 border-pink-500/20', btnBg: 'bg-gradient-to-r from-pink-600 to-cyan-600 text-white' };
+    if (icon.includes('phone')) return { iconColor: 'text-emerald-400', iconBg: 'bg-emerald-500/10 border-emerald-500/20', btnBg: 'bg-emerald-600 hover:bg-emerald-500 text-white' };
+    if (icon.includes('envelope')) return { iconColor: 'text-amber-400', iconBg: 'bg-amber-500/10 border-amber-500/20', btnBg: 'bg-amber-600 hover:bg-amber-500 text-white' };
+    return { iconColor: 'text-brand-400', iconBg: 'bg-brand-500/10 border-brand-500/20', btnBg: 'bg-brand-600 hover:bg-brand-500 text-white' };
 }
 
 window.filterDownloads = function(category, pushToHistory = true) {
     currentDlFilter = category || 'MainFile';
     
-    const categories = ['MainFile', 'Patch', 'APK', 'LDPlayer'];
-    categories.forEach(cat => {
-        const btn = document.getElementById(`btn-dl-${cat}`);
+    const categories = [
+        { id: 'MainFile', icon: 'fa-solid fa-file-arrow-down text-emerald-400', label: 'Main Files' },
+        { id: 'Patch', icon: 'fa-solid fa-wand-magic-sparkles text-cyan-400', label: 'Patch Update' },
+        { id: 'APK', icon: 'fa-brands fa-android text-purple-400', label: 'App APK' },
+        { id: 'LDPlayer', icon: 'fa-solid fa-mobile-screen-button text-brand-400', label: 'Download LDPlayer' }
+    ];
+
+    categories.forEach(item => {
+        const btn = document.getElementById(`btn-dl-${item.id}`);
         if (btn) {
-            if (cat === currentDlFilter) {
-                btn.className = "px-4 py-1.5 rounded-full bg-brand-600 text-white border border-brand-500 transition";
+            if (item.id === currentDlFilter) {
+                btn.className = "px-4 py-2 rounded-xl bg-brand-600 text-white border border-brand-500 shadow-md shadow-brand-600/20 font-bold transition flex items-center gap-1.5";
             } else {
-                btn.className = "px-4 py-1.5 rounded-full bg-dark-card text-gray-400 hover:text-white border border-dark-border transition";
+                btn.className = "px-4 py-2 rounded-xl bg-dark-card text-gray-400 hover:text-white border border-dark-border transition flex items-center gap-1.5";
             }
         }
     });
@@ -128,7 +163,6 @@ window.openDownloadsCat = function(category, event) {
     filterDownloads(category, true);
 };
 
-// Render Downloads Grid ជាមួយ Release Notes និង Auto Date
 function renderDownloadsGrid() {
     const dlContainer = document.getElementById('customDownloadsList');
     if (!dlContainer) return;
@@ -228,7 +262,7 @@ function renderDownloadsGrid() {
 // RENDER ALL DATA
 async function renderPublicData() {
     let functionsList = [];
-    let tools = [];
+    let contactsList = [];
     let posts = [];
 
     try {
@@ -245,7 +279,7 @@ async function renderPublicData() {
             const record = result.record || {};
             
             functionsList = Array.isArray(record.functions) ? record.functions : [];
-            tools = Array.isArray(record.tools) ? record.tools : [];
+            contactsList = Array.isArray(record.contacts) ? record.contacts : [];
             globalDownloadsData = Array.isArray(record.downloads) ? migrateOldDownloads(record.downloads) : [];
             posts = Array.isArray(record.posts) ? record.posts : [];
         }
@@ -255,45 +289,64 @@ async function renderPublicData() {
 
     renderDownloadsGrid();
 
-    // 1. Functions
+    // 1. IMPORTANT FUNCTIONS (Grid មានសណ្តាប់ធ្នាប់ ឆ្វេងទៅស្តាំ)
     const fnContainer = document.getElementById('importantFunctionsGrid');
     if (fnContainer) {
         if (functionsList.length === 0) {
-            fnContainer.innerHTML = '<div class="text-gray-500 text-center text-xs col-span-1 md:col-span-4 py-8">មិនទាន់មានទិន្នន័យ Functions នៅឡើយទេ</div>';
+            fnContainer.innerHTML = '<div class="text-gray-500 text-center text-xs col-span-full py-8">មិនទាន់មានទិន្នន័យ Functions នៅឡើយទេ</div>';
         } else {
-            fnContainer.innerHTML = functionsList.map(fn => `
-                <div class="bg-dark-bg p-4 rounded-xl border border-dark-border hover:border-brand-500/40 transition">
-                    <h4 class="font-bold text-brand-400 mb-3 flex items-center gap-2">
-                        <i class="${fn.icon || 'fa-solid fa-cube'}"></i> ${fn.title}
-                    </h4>
-                    <ul class="space-y-2 text-gray-300">
-                        ${(fn.items || []).map(item => `<li>• ${item}</li>`).join('')}
-                    </ul>
-                </div>
-            `).join('');
+            fnContainer.innerHTML = functionsList.map((fn, idx) => {
+                const items = fn.items || [];
+                const theme = getFunctionBoxTheme(fn.icon, idx);
+
+                return `
+                    <div class="bg-dark-bg p-5 rounded-2xl border border-dark-border hover:border-brand-500/40 transition-all duration-200 shadow-xl flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between border-b border-dark-border/60 pb-3.5 mb-3.5 gap-2">
+                                <h4 class="text-sm sm:text-base font-bold ${theme.text} flex items-center gap-2 truncate">
+                                    <i class="${fn.icon || 'fa-solid fa-cube'} flex-shrink-0"></i>
+                                    <span class="truncate">${fn.title}</span>
+                                </h4>
+                                <span class="text-[10px] px-2.5 py-0.5 rounded-lg border whitespace-nowrap flex-shrink-0 font-semibold ${theme.badge}">
+                                    ${items.length} មុខងារ
+                                </span>
+                            </div>
+                            <ul class="space-y-1.5 text-gray-300">
+                                ${items.map(item => `
+                                    <li class="flex items-start gap-2 text-xs leading-relaxed group">
+                                        <span class="${theme.bullet} font-bold mt-0.5 flex-shrink-0">•</span>
+                                        <span class="text-gray-300 group-hover:text-white transition">${item}</span>
+                                    </li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
     }
 
-    // 2. Featured Tools
-    const toolsContainer = document.getElementById('homeFeaturedToolsGrid');
-    if (toolsContainer) {
-        if (tools.length === 0) {
-            toolsContainer.innerHTML = '<div class="text-gray-500 text-center text-xs col-span-1 md:col-span-2 py-8">មិនទាន់មានកម្មវិធីនៅឡើយទេ</div>';
+    // 2. CONTACT SUPPORT (ទាញទិន្នន័យ Dynamic ពី Admin)
+    const contactContainer = document.getElementById('customContactsList');
+    if (contactContainer) {
+        if (contactsList.length === 0) {
+            contactContainer.innerHTML = '<div class="text-gray-500 text-center text-xs col-span-full py-8">មិនទាន់មានព័ត៌មាន Contact Support នៅឡើយទេ</div>';
         } else {
-            toolsContainer.innerHTML = tools.map((t) => `
-                <div class="bg-dark-card border border-dark-border hover:border-brand-500/40 rounded-2xl p-6 glow transition flex flex-col justify-between">
-                    <div>
-                        <div class="bg-dark-bg border border-dark-border rounded-xl p-4 mb-5 flex items-center justify-center min-h-[180px]">
-                            <i class="fa-solid fa-cube text-5xl text-brand-400 mb-2"></i>
+            contactContainer.innerHTML = contactsList.map(c => {
+                const theme = getContactTheme(c.icon || '');
+                return `
+                    <div class="bg-dark-card border border-dark-border hover:border-brand-500/40 p-6 rounded-2xl flex flex-col items-center justify-between transition shadow-xl">
+                        <div class="w-14 h-14 rounded-2xl ${theme.iconBg} border flex items-center justify-center mb-4">
+                            <i class="${c.icon || 'fa-solid fa-headset'} text-3xl ${theme.iconColor}"></i>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">${t.name}</h3>
-                        <ul class="text-xs text-gray-400 space-y-1.5 mb-6">
-                            ${(Array.isArray(t.features) ? t.features : (t.features || '').split(',')).map(f => `<li><i class="fa-solid fa-check text-brand-400 mr-1.5"></i> ${f.trim()}</li>`).join('')}
-                        </ul>
+                        <h4 class="font-bold text-white text-base">${c.title}</h4>
+                        <p class="text-xs text-gray-400 mt-1 mb-6 text-center">${c.desc || ''}</p>
+                        <a href="${c.link}" target="_blank" class="btn-hover-zoom w-full ${theme.btnBg} font-semibold py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg">
+                            <i class="${c.icon || 'fa-solid fa-arrow-up-right-from-square'} text-xs"></i> ${c.btnText || 'ទំនាក់ទំនង'}
+                        </a>
                     </div>
-                    <button onclick="navigateTo('automation')" class="btn-hover-zoom w-full bg-brand-600 hover:bg-brand-500 text-white font-semibold py-2.5 rounded-xl text-xs">View Detail</button>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
     }
 

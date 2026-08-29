@@ -15,7 +15,7 @@
         }
     </script>
 
-    <!-- Synchronous Pre-Route: ចាក់សោរបង្ហាញតែ View ដែលត្រូវមួយគត់ពេល Refresh (ការពារការលោតត្រួតគ្នា ១០០%) -->
+    <!-- Synchronous Pre-Route: ចាក់សោរបង្ហាញតែ View ដែលត្រូវមួយគត់ពេល Refresh -->
     <script>
         (function() {
             const params = new URLSearchParams(window.location.search);
@@ -55,7 +55,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 
     <style>
-        /* បិទរាល់ទំព័រទាំងអស់ជាស្រេចតាំងពីដំបូង */
         .page-view { display: none !important; }
         .page-view.active { display: block !important; }
         .hidden { display: none !important; }
@@ -67,19 +66,13 @@
         }
         .glass { background: rgba(11, 15, 25, 0.9); backdrop-filter: blur(16px); }
         
-        /* Button Hover Zoom-In / Zoom-Out Animation */
         .btn-hover-zoom {
             transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s ease, box-shadow 0.2s ease;
             transform-origin: center;
         }
-        .btn-hover-zoom:hover {
-            transform: scale(1.06);
-        }
-        .btn-hover-zoom:active {
-            transform: scale(0.95);
-        }
+        .btn-hover-zoom:hover { transform: scale(1.04); }
+        .btn-hover-zoom:active { transform: scale(0.96); }
 
-        /* Nav Button Active State */
         .nav-btn.nav-active {
             background-color: #4f46e5 !important;
             color: #ffffff !important;
@@ -89,14 +82,8 @@
         
         .glow { box-shadow: 0 0 35px -5px rgba(99, 102, 241, 0.25); }
 
-        /* មុខងារលុបចោលរបាររំកិល */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white">
@@ -111,17 +98,21 @@
             </div>
 
             <!-- Main Menu Buttons -->
-            <nav class="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-medium overflow-x-auto no-scrollbar py-2.5 px-1 md:overflow-visible">
-                <button onclick="navigateTo('home')" id="nav-home" class="nav-btn btn-hover-zoom px-3 py-1.5 rounded-xl border border-transparent hover:border-dark-border hover:bg-dark-card text-gray-300 hover:text-white">Home</button>
-                <button onclick="navigateTo('automation')" id="nav-automation" class="nav-btn btn-hover-zoom px-3 py-1.5 rounded-xl border border-transparent hover:border-dark-border hover:bg-dark-card text-gray-300 hover:text-white">Kdeb Automation</button>
+            <nav class="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm font-medium overflow-x-auto no-scrollbar py-2.5 px-1 md:overflow-visible">
+                <button onclick="navigateTo('home')" id="nav-home" class="nav-btn btn-hover-zoom px-3 py-1.5 rounded-xl border border-transparent hover:border-dark-border hover:bg-dark-card text-gray-300 hover:text-white flex items-center gap-1.5">
+                    <i class="fa-solid fa-house text-brand-400"></i> <span>Home</span>
+                </button>
+                <button onclick="navigateTo('automation')" id="nav-automation" class="nav-btn btn-hover-zoom px-3 py-1.5 rounded-xl border border-transparent hover:border-dark-border hover:bg-dark-card text-gray-300 hover:text-white flex items-center gap-1.5">
+                    <i class="fa-solid fa-robot text-purple-400"></i> <span>Kdeb Automation</span>
+                </button>
                 
                 <!-- Downloads Hover Dropdown Container -->
                 <div class="relative group">
-                    <button onclick="navigateTo('downloads')" id="nav-downloads" class="nav-btn btn-hover-zoom px-3 py-1.5 rounded-xl border border-transparent hover:border-dark-border hover:bg-dark-card text-gray-300 hover:text-white flex items-center gap-1">
-                        Downloads <i class="fa-solid fa-chevron-down text-[10px] transition-transform group-hover:rotate-180"></i>
+                    <button onclick="navigateTo('downloads')" id="nav-downloads" class="nav-btn btn-hover-zoom px-3 py-1.5 rounded-xl border border-transparent hover:border-dark-border hover:bg-dark-card text-gray-300 hover:text-white flex items-center gap-1.5">
+                        <i class="fa-solid fa-download text-emerald-400"></i> <span>Downloads</span> <i class="fa-solid fa-chevron-down text-[10px] transition-transform group-hover:rotate-180"></i>
                     </button>
                     <!-- Dropdown Menu Wrapper -->
-                    <div class="absolute top-full left-0 pt-2 w-52 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                    <div class="absolute top-full left-0 pt-2 w-56 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                         <div class="bg-dark-card border border-dark-border rounded-xl shadow-2xl p-1.5 flex flex-col gap-1">
                             <a href="index.html?view=downloads&cat=MainFile" onclick="openDownloadsCat('MainFile', event)" class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-300 hover:text-white hover:bg-brand-600 transition">
                                 <i class="fa-solid fa-file-arrow-down text-emerald-400"></i> Main Files
@@ -139,9 +130,15 @@
                     </div>
                 </div>
 
-                <button onclick="navigateTo('tutorials')" id="nav-tutorials" class="nav-btn btn-hover-zoom px-3 py-1.5 rounded-xl border border-transparent hover:border-dark-border hover:bg-dark-card text-gray-300 hover:text-white">Tutorials</button>
-                <a href="utilities.html" class="btn-hover-zoom px-3 py-1.5 rounded-xl border border-transparent hover:border-dark-border hover:bg-dark-card text-gray-300 hover:text-white">Web Utilities</a>
-                <button onclick="navigateTo('contact')" id="nav-contact" class="nav-btn btn-hover-zoom px-3 py-1.5 rounded-xl border border-transparent hover:border-dark-border hover:bg-dark-card text-gray-300 hover:text-white">Contact</button>
+                <button onclick="navigateTo('tutorials')" id="nav-tutorials" class="nav-btn btn-hover-zoom px-3 py-1.5 rounded-xl border border-transparent hover:border-dark-border hover:bg-dark-card text-gray-300 hover:text-white flex items-center gap-1.5">
+                    <i class="fa-solid fa-graduation-cap text-cyan-400"></i> <span>Tutorials</span>
+                </button>
+                <a href="utilities.html" class="btn-hover-zoom px-3 py-1.5 rounded-xl border border-transparent hover:border-dark-border hover:bg-dark-card text-gray-300 hover:text-white flex items-center gap-1.5">
+                    <i class="fa-solid fa-toolbox text-yellow-400"></i> <span>Web Utilities</span>
+                </a>
+                <button onclick="navigateTo('contact')" id="nav-contact" class="nav-btn btn-hover-zoom px-3 py-1.5 rounded-xl border border-transparent hover:border-dark-border hover:bg-dark-card text-gray-300 hover:text-white flex items-center gap-1.5">
+                    <i class="fa-solid fa-headset text-rose-400"></i> <span>Contact</span>
+                </button>
             </nav>
         </div>
     </header>
@@ -161,9 +158,13 @@
                         Own the Automation, <br><span class="bg-clip-text text-transparent bg-gradient-to-r from-brand-400 via-indigo-300 to-purple-400">Scale With Kdeb Tools.</span>
                     </h1>
                     <p class="text-gray-400 text-sm sm:text-base max-w-2xl mx-auto mb-8">កម្មវិធីជំនួយការងារស្វ័យប្រវត្តដែលបង្កើតឡើងដើម្បីជួយសន្សំសំចៃពេលវេលា និងបង្កើនប្រសិទ្ធភាពការងាររបស់អ្នក។</p>
-                    <div class="flex flex-wrap justify-center gap-4">
-                        <button onclick="navigateTo('automation')" class="btn-hover-zoom bg-brand-600 hover:bg-brand-500 text-white font-semibold px-6 py-3 rounded-xl shadow-lg shadow-brand-500/25 flex items-center gap-2">
+                    
+                    <div class="flex flex-wrap justify-center gap-3.5 sm:gap-4">
+                        <button onclick="navigateTo('automation')" class="btn-hover-zoom bg-brand-600 hover:bg-brand-500 text-white font-semibold px-6 py-3 rounded-xl shadow-lg shadow-brand-500/25 flex items-center gap-2 text-sm">
                             <i class="fa-solid fa-cube text-yellow-300"></i> មើលកម្មវិធី KDEB TOOLS
+                        </button>
+                        <button onclick="navigateTo('downloads')" class="btn-hover-zoom bg-dark-card hover:bg-dark-hover border border-dark-border hover:border-brand-500/40 text-white font-semibold px-6 py-3 rounded-xl shadow-lg flex items-center gap-2 text-sm">
+                            <i class="fa-solid fa-download text-emerald-400"></i> ទាញយកកម្មវិធី (Downloads)
                         </button>
                     </div>
                 </div>
@@ -176,29 +177,22 @@
                 <div class="bg-dark-card border border-dark-border rounded-xl p-5 text-center"><i class="fa-solid fa-headset text-brand-400 text-2xl mb-2"></i><h4 class="font-bold text-white text-sm">Live Support</h4></div>
                 <div class="bg-dark-card border border-dark-border rounded-xl p-5 text-center"><i class="fa-solid fa-arrows-rotate text-brand-400 text-2xl mb-2"></i><h4 class="font-bold text-white text-sm">Regular Updates</h4></div>
             </div>
-
-            <!-- Featured Products Grid -->
-            <div class="max-w-7xl mx-auto px-4 py-12">
-                <div class="text-center mb-10">
-                    <h2 class="text-2xl sm:text-3xl font-bold text-white">កម្មវិធី & Tools របស់ Kdeb Tools</h2>
-                    <p class="text-gray-400 text-xs sm:text-sm mt-1">រាល់កម្មវិធីទាំងអស់ត្រូវបានតេស្ត និងឌីហ្សាញឡើងយ៉ាងយកចិត្តទុកដាក់។</p>
-                </div>
-                <div id="homeFeaturedToolsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-8"></div>
-            </div>
         </section>
 
-        <!-- PAGE 2: KDEB TOOLS AUTOMATION (បាន Remove ប្រអប់ Download ស្ទួនចេញ) -->
+        <!-- PAGE 2: KDEB TOOLS AUTOMATION -->
         <section id="view-automation" class="page-view py-10">
-            <div class="max-w-6xl mx-auto px-4">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-8">
                     <span class="text-xs font-bold bg-brand-500/20 text-brand-300 px-3 py-1 rounded-full border border-brand-500/30">KDEB TOOLS SUITE</span>
                     <h1 class="text-3xl sm:text-4xl font-extrabold text-white mt-3 mb-2">Kdeb Tools Automation</h1>
                     <p class="text-gray-400 text-xs sm:text-sm">កម្មវិធីគ្រប់គ្រង និង Run Auto ជាមួយ LDPlayer ដោយស្វ័យប្រវត្តិ។</p>
                 </div>
 
-                <div class="bg-dark-card border border-dark-border rounded-2xl p-6 sm:p-8 my-8">
-                    <h3 class="text-xl font-bold text-white text-center mb-8">Important Functions</h3>
-                    <div id="importantFunctionsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-xs text-gray-300"></div>
+                <div class="bg-dark-card border border-dark-border rounded-2xl p-5 sm:p-7 lg:p-8 my-8 shadow-2xl">
+                    <h3 class="text-xl font-bold text-white text-center mb-6 sm:mb-8 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-layer-group text-brand-400"></i> Important Functions
+                    </h3>
+                    <div id="importantFunctionsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start"></div>
                 </div>
             </div>
         </section>
@@ -209,12 +203,20 @@
                 <h1 class="text-3xl font-extrabold text-white text-center mb-4">Downloads Center</h1>
                 <p class="text-gray-400 text-xs sm:text-sm text-center mb-8">ទាញយកឯកសារជំនួយ កម្មវិធី Emulator និង Driver ផ្សេងៗ</p>
                 
-                <!-- Category Filter Pills -->
-                <div class="flex flex-wrap justify-center gap-2 mb-8 text-xs font-semibold" id="downloadFilters">
-                    <button onclick="filterDownloads('MainFile')" id="btn-dl-MainFile" class="px-4 py-1.5 rounded-full bg-brand-600 text-white border border-brand-500 transition">Main Files</button>
-                    <button onclick="filterDownloads('Patch')" id="btn-dl-Patch" class="px-4 py-1.5 rounded-full bg-dark-card text-gray-400 hover:text-white border border-dark-border transition">Patch Update</button>
-                    <button onclick="filterDownloads('APK')" id="btn-dl-APK" class="px-4 py-1.5 rounded-full bg-dark-card text-gray-400 hover:text-white border border-dark-border transition">App APK</button>
-                    <button onclick="filterDownloads('LDPlayer')" id="btn-dl-LDPlayer" class="px-4 py-1.5 rounded-full bg-dark-card text-gray-400 hover:text-white border border-dark-border transition">Download LDPlayer</button>
+                <!-- Category Filter Pills with Icons -->
+                <div class="flex flex-wrap justify-center gap-2.5 mb-8 text-xs font-semibold" id="downloadFilters">
+                    <button onclick="filterDownloads('MainFile')" id="btn-dl-MainFile" class="px-4 py-2 rounded-xl bg-brand-600 text-white border border-brand-500 transition flex items-center gap-1.5 shadow-md shadow-brand-600/20">
+                        <i class="fa-solid fa-file-arrow-down text-emerald-400"></i> Main Files
+                    </button>
+                    <button onclick="filterDownloads('Patch')" id="btn-dl-Patch" class="px-4 py-2 rounded-xl bg-dark-card text-gray-400 hover:text-white border border-dark-border transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-wand-magic-sparkles text-cyan-400"></i> Patch Update
+                    </button>
+                    <button onclick="filterDownloads('APK')" id="btn-dl-APK" class="px-4 py-2 rounded-xl bg-dark-card text-gray-400 hover:text-white border border-dark-border transition flex items-center gap-1.5">
+                        <i class="fa-brands fa-android text-purple-400"></i> App APK
+                    </button>
+                    <button onclick="filterDownloads('LDPlayer')" id="btn-dl-LDPlayer" class="px-4 py-2 rounded-xl bg-dark-card text-gray-400 hover:text-white border border-dark-border transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-mobile-screen-button text-brand-400"></i> Download LDPlayer
+                    </button>
                 </div>
 
                 <div id="customDownloadsList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
@@ -229,25 +231,12 @@
             </div>
         </section>
 
-        <!-- PAGE 5: CONTACT SUPPORT -->
-        <section id="view-contact" class="page-view py-12 text-center">
-            <div class="max-w-3xl mx-auto px-4">
+        <!-- PAGE 5: CONTACT SUPPORT (Dynamic Container គ្រប់គ្រងតាម Admin) -->
+        <section id="view-contact" class="page-view py-16 text-center">
+            <div class="max-w-5xl mx-auto px-4">
                 <h1 class="text-3xl font-extrabold text-white mb-2">Contact Support</h1>
-                <p class="text-gray-400 text-xs mb-8">ប្រសិនបើអ្នកត្រូវការជំនួយបច្ចេកទេស សូមទាក់ទងមកយើងខ្ញុំ</p>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <a href="https://t.me/mach_theara" target="_blank" class="btn-hover-zoom bg-dark-card border border-dark-border p-6 rounded-2xl block">
-                        <i class="fa-brands fa-telegram text-3xl text-[#229ED9] mb-2"></i>
-                        <h4 class="font-bold text-white text-sm">Telegram</h4>
-                    </a>
-                    <a href="https://facebook.com/" target="_blank" class="btn-hover-zoom bg-dark-card border border-dark-border p-6 rounded-2xl block">
-                        <i class="fa-brands fa-facebook text-3xl text-[#1877F2] mb-2"></i>
-                        <h4 class="font-bold text-white text-sm">Facebook</h4>
-                    </a>
-                    <a href="https://www.youtube.com/@kdebtools" target="_blank" class="btn-hover-zoom bg-dark-card border border-dark-border p-6 rounded-2xl block">
-                        <i class="fa-brands fa-youtube text-3xl text-[#FF0000] mb-2"></i>
-                        <h4 class="font-bold text-white text-sm">YouTube</h4>
-                    </a>
-                </div>
+                <p class="text-gray-400 text-xs sm:text-sm mb-10">ប្រសិនបើអ្នកត្រូវការជំនួយបច្ចេកទេស ឬសាកសួរព័ត៌មាន សូមទាក់ទងមកយើងខ្ញុំតាមរយៈ</p>
+                <div id="customContactsList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto"></div>
             </div>
         </section>
     </main>

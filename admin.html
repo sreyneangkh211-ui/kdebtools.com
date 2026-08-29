@@ -10,10 +10,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kdeb Tools - Admin Control Center</title>
     
-    <!-- Favicon Icon -->
     <link rel="icon" type="image/x-icon" href="image/closed.ico">
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -83,13 +81,13 @@
             </div>
         </div>
 
-        <!-- TABS -->
+        <!-- TABS (ប្តូរ Featured Tools ទៅជា Contact Support) -->
         <div class="flex flex-wrap gap-2 mb-6 border-b border-dark-border pb-4">
             <button onclick="switchAdminTab('functions')" id="tab-functions" class="tab-btn active bg-dark-card border border-dark-border text-gray-300 hover:text-white px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2">
                 <i class="fa-solid fa-list-check text-yellow-400"></i> Important Functions <span id="count-functions" class="bg-dark-bg px-2 py-0.5 rounded-full text-[10px]">0</span>
             </button>
-            <button onclick="switchAdminTab('tools')" id="tab-tools" class="tab-btn bg-dark-card border border-dark-border text-gray-300 hover:text-white px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2">
-                <i class="fa-solid fa-cube text-brand-400"></i> Featured Tools <span id="count-tools" class="bg-dark-bg px-2 py-0.5 rounded-full text-[10px]">0</span>
+            <button onclick="switchAdminTab('contacts')" id="tab-contacts" class="tab-btn bg-dark-card border border-dark-border text-gray-300 hover:text-white px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2">
+                <i class="fa-solid fa-headset text-rose-400"></i> Contact Support <span id="count-contacts" class="bg-dark-bg px-2 py-0.5 rounded-full text-[10px]">0</span>
             </button>
             <button onclick="switchAdminTab('downloads')" id="tab-downloads" class="tab-btn bg-dark-card border border-dark-border text-gray-300 hover:text-white px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2">
                 <i class="fa-solid fa-file-arrow-down text-emerald-400"></i> Download Center <span id="count-downloads" class="bg-dark-bg px-2 py-0.5 rounded-full text-[10px]">0</span>
@@ -125,7 +123,7 @@
                     </div>
                     <div>
                         <label class="block text-gray-300 font-semibold mb-1">បញ្ជីមុខងារ (សរសេរ ១ ជួរ = ១ ចំណុច)</label>
-                        <textarea id="fnItems" rows="5" placeholder="Auto Post&#10;Check Live UID&#10;Auto Bypass OTP" required class="w-full bg-dark-bg border border-dark-border rounded-lg p-2.5 text-white outline-none focus:border-brand-500"></textarea>
+                        <textarea id="fnItems" rows="6" placeholder="Auto Post&#10;Check Live UID&#10;Auto Bypass OTP" required class="w-full bg-dark-bg border border-dark-border rounded-lg p-2.5 text-white outline-none focus:border-brand-500"></textarea>
                     </div>
                     <button type="submit" id="fnSubmitBtn" class="w-full bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-2.5 rounded-lg transition">+ បង្កើតប្រអប់មុខងារ</button>
                 </form>
@@ -136,37 +134,48 @@
             </div>
         </div>
 
-        <!-- TAB 2: TOOLS -->
-        <div id="content-tools" class="admin-tab-content hidden grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- TAB 2: CONTACT SUPPORT (បង្កើត/កែប្រែ Channel ទំនាក់ទំនង) -->
+        <div id="content-contacts" class="admin-tab-content hidden grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="bg-dark-card p-6 rounded-2xl border border-dark-border h-fit">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 id="toolFormTitle" class="text-sm font-bold text-brand-400"><i class="fa-solid fa-plus-circle"></i> បន្ថែម Featured Tool</h3>
-                    <button id="toolCancelBtn" onclick="resetToolForm()" class="hidden text-xs text-gray-400 hover:text-white underline">បោះបង់</button>
+                    <h3 id="contactFormTitle" class="text-sm font-bold text-rose-400"><i class="fa-solid fa-plus-circle"></i> បន្ថែម Contact Channel</h3>
+                    <button id="contactCancelBtn" onclick="resetContactForm()" class="hidden text-xs text-gray-400 hover:text-white underline">បោះបង់</button>
                 </div>
-                <form id="toolForm" onsubmit="saveTool(event)" class="space-y-3.5 text-xs">
-                    <input type="hidden" id="toolEditId">
+                <form id="contactForm" onsubmit="saveContact(event)" class="space-y-3.5 text-xs">
+                    <input type="hidden" id="cEditId">
                     <div>
-                        <label class="block text-gray-300 font-semibold mb-1">ឈ្មោះ Tool & Version</label>
-                        <input type="text" id="tName" placeholder="ឧ. Kdeb Tools Automation v2.0" required class="w-full bg-dark-bg border border-dark-border rounded-lg p-2.5 text-white outline-none focus:border-brand-500">
+                        <label class="block text-gray-300 font-semibold mb-1">ឈ្មោះ Channel / Support</label>
+                        <input type="text" id="cTitle" placeholder="ឧ. Telegram Support" required class="w-full bg-dark-bg border border-dark-border rounded-lg p-2.5 text-white outline-none focus:border-rose-500">
                     </div>
                     <div>
-                        <label class="block text-gray-300 font-semibold mb-1">មុខងារសំខាន់ៗ (ក្បៀស , )</label>
-                        <input type="text" id="tFeatures" placeholder="Auto Post, Fast Run, Multi-LD" required class="w-full bg-dark-bg border border-dark-border rounded-lg p-2.5 text-white outline-none focus:border-brand-500">
+                        <label class="block text-gray-300 font-semibold mb-1">ការពិពណ៌នាសង្ខេប (Description)</label>
+                        <input type="text" id="cDesc" placeholder="ឧ. ឆាតផ្ទាល់ជាមួយក្រុមការងារ Support" required class="w-full bg-dark-bg border border-dark-border rounded-lg p-2.5 text-white outline-none focus:border-rose-500">
                     </div>
                     <div>
-                        <label class="block text-gray-300 font-semibold mb-1">System Requirement</label>
-                        <input type="text" id="tSystem" placeholder="Win 10/11 | RAM 8GB+" required class="w-full bg-dark-bg border border-dark-border rounded-lg p-2.5 text-white outline-none focus:border-brand-500">
+                        <label class="block text-gray-300 font-semibold mb-1">ប្រភេទ Platform / Icon</label>
+                        <select id="cIcon" onchange="autoFillBtnText(this.value)" class="w-full bg-dark-bg border border-dark-border rounded-lg p-2.5 text-white outline-none focus:border-rose-500">
+                            <option value="fa-brands fa-telegram">✈️ Telegram</option>
+                            <option value="fa-brands fa-youtube">▶️ YouTube</option>
+                            <option value="fa-brands fa-facebook">📘 Facebook</option>
+                            <option value="fa-brands fa-tiktok">🎵 TikTok</option>
+                            <option value="fa-solid fa-phone">📞 Phone / Call</option>
+                            <option value="fa-solid fa-envelope">✉️ Email</option>
+                        </select>
                     </div>
                     <div>
-                        <label class="block text-gray-300 font-semibold mb-1">Download Link</label>
-                        <input type="url" id="tLink" placeholder="https://..." required class="w-full bg-dark-bg border border-dark-border rounded-lg p-2.5 text-white outline-none focus:border-brand-500">
+                        <label class="block text-gray-300 font-semibold mb-1">អក្សរលើប៊ូតុង (Button Text)</label>
+                        <input type="text" id="cBtnText" placeholder="ឧ. ឆាតលើ Telegram" required class="w-full bg-dark-bg border border-dark-border rounded-lg p-2.5 text-white outline-none focus:border-rose-500">
                     </div>
-                    <button type="submit" id="toolSubmitBtn" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-semibold py-2.5 rounded-lg transition mt-2">+ រក្សាទុក Tool</button>
+                    <div>
+                        <label class="block text-gray-300 font-semibold mb-1">តំណភ្ជាប់ (Link URL)</label>
+                        <input type="text" id="cLink" placeholder="https://t.me/... ឬ https://..." required class="w-full bg-dark-bg border border-dark-border rounded-lg p-2.5 text-white outline-none focus:border-rose-500">
+                    </div>
+                    <button type="submit" id="contactSubmitBtn" class="w-full bg-rose-600 hover:bg-rose-500 text-white font-semibold py-2.5 rounded-lg transition mt-2">+ រក្សាទុក Contact</button>
                 </form>
             </div>
             <div class="lg:col-span-2 bg-dark-card p-6 rounded-2xl border border-dark-border">
-                <h3 class="text-sm font-bold text-white mb-4">បញ្ជី Featured Tools</h3>
-                <div id="list-tools" class="space-y-3 text-xs"></div>
+                <h3 class="text-sm font-bold text-white mb-4">បញ្ជី Contact Channels</h3>
+                <div id="list-contacts" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs"></div>
             </div>
         </div>
 
@@ -184,7 +193,7 @@
                         <input type="file" id="dFileInput" onchange="autoFillFileInfo(this)" class="w-full bg-dark-bg border border-dark-border rounded-lg p-2 text-gray-400 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:bg-emerald-600 file:text-white">
                     </div>
                     <div>
-                        <label class="block text-gray-300 font-semibold mb-1">ឈ្មោះឯកសារ / កំណែ Update (ឧ. Patch Update: V1.6.17)</label>
+                        <label class="block text-gray-300 font-semibold mb-1">ឈ្មោះឯកសារ / កំណែ Update</label>
                         <input type="text" id="dName" placeholder="ឈ្មោះ File..." required class="w-full bg-dark-bg border border-dark-border rounded-lg p-2.5 text-white outline-none focus:border-emerald-500">
                     </div>
                     <div>
@@ -201,10 +210,9 @@
                         <input type="text" id="dSize" placeholder="ឧ. 45 MB" class="w-full bg-dark-bg border border-dark-border rounded-lg p-2.5 text-white outline-none focus:border-emerald-500">
                     </div>
                     <div>
-                        <label class="block text-gray-300 font-semibold mb-1">Download Link (បើមិនរើស File)</label>
+                        <label class="block text-gray-300 font-semibold mb-1">Download Link</label>
                         <input type="text" id="dLink" placeholder="https://..." class="w-full bg-dark-bg border border-dark-border rounded-lg p-2.5 text-white outline-none focus:border-emerald-500">
                     </div>
-                    <!-- បន្ថែម Changelog / Release Notes -->
                     <div>
                         <label class="block text-gray-300 font-semibold mb-1">កំណត់សម្គាល់កែលម្អ / Release Notes (១ ជួរ = ១ ចំណុច)</label>
                         <textarea id="dNotes" rows="4" placeholder="Fixed follow/unfollow pages/profiles&#10;Fixed add/follow friends&#10;Fixed known issues" class="w-full bg-dark-bg border border-dark-border rounded-lg p-2.5 text-white outline-none focus:border-emerald-500"></textarea>
@@ -232,11 +240,11 @@
                         <input type="text" id="pTitle" placeholder="ចំណងជើង..." required class="w-full bg-dark-bg border border-dark-border rounded-lg p-2.5 text-white outline-none focus:border-cyan-500">
                     </div>
                     <div>
-                        <label class="block text-gray-300 font-semibold mb-1">លីងវីដេអូ YouTube (YouTube Link)</label>
-                        <input type="url" id="pYoutubeLink" placeholder="https://www.youtube.com/watch?v=... ឬ https://youtu.be/..." required class="w-full bg-dark-bg border border-dark-border rounded-lg p-2.5 text-white outline-none focus:border-cyan-500">
+                        <label class="block text-gray-300 font-semibold mb-1">លីងវីដេអូ YouTube</label>
+                        <input type="url" id="pYoutubeLink" placeholder="https://www.youtube.com/watch?v=..." required class="w-full bg-dark-bg border border-dark-border rounded-lg p-2.5 text-white outline-none focus:border-cyan-500">
                     </div>
                     <div>
-                        <label class="block text-gray-300 font-semibold mb-1">ប្រភេទ / Icon បង្ហាញ (Type)</label>
+                        <label class="block text-gray-300 font-semibold mb-1">ប្រភេទ / Icon បង្ហាញ</label>
                         <select id="pIcon" class="w-full bg-dark-bg border border-dark-border rounded-lg p-2.5 text-white outline-none focus:border-cyan-500">
                             <option value="fa-solid fa-download">📥 ដំឡើង (Installation)</option>
                             <option value="fa-solid fa-key">🔑 អាជ្ញាប័ណ្ណ (License)</option>
@@ -254,7 +262,6 @@
         </div>
     </div>
 
-    <!-- Script Link -->
     <script src="js/admin.js"></script>
 </body>
 </html>
