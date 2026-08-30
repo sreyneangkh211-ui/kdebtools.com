@@ -15,6 +15,19 @@
         }
     </script>
 
+    <!-- Auto Clean URL: លុប /index.html និង .html ចេញពី Browser URL -->
+    <script>
+        (function() {
+            if (window.location.pathname.endsWith('/index.html')) {
+                const cleanPath = window.location.pathname.replace(/\/index\.html$/, '') || '/';
+                window.history.replaceState(null, '', cleanPath + window.location.search);
+            } else if (window.location.pathname.endsWith('.html')) {
+                const cleanPath = window.location.pathname.replace(/\.html$/, '');
+                window.history.replaceState(null, '', cleanPath + window.location.search);
+            }
+        })();
+    </script>
+
     <!-- Synchronous Pre-Route -->
     <script>
         (function() {
@@ -184,7 +197,7 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-8">
                     <span class="text-xs font-bold bg-brand-500/20 text-brand-300 px-3 py-1 rounded-full border border-brand-500/30">KDEB TOOLS SUITE</span>
-                    <h1 class="text-3xl sm:4xl font-extrabold text-white mt-3 mb-2">Kdeb Tools Automation</h1>
+                    <h1 class="text-3xl sm:text-4xl font-extrabold text-white mt-3 mb-2">Kdeb Tools Automation</h1>
                     <p class="text-gray-400 text-xs sm:text-sm">កម្មវិធីគ្រប់គ្រង និង Run Auto ជាមួយ LDPlayer ដោយស្វ័យប្រវត្តិ។</p>
                 </div>
 
@@ -203,7 +216,7 @@
                 <h1 class="text-3xl font-extrabold text-white text-center mb-4">Downloads Center</h1>
                 <p class="text-gray-400 text-xs sm:text-sm text-center mb-8">ទាញយកឯកសារជំនួយ កម្មវិធី Emulator និង Driver ផ្សេងៗ</p>
                 
-                <!-- Main Category Filter Pills (Main Files នៅលេខ ១) -->
+                <!-- Category Filter Pills (Main Files នៅលេខ១) -->
                 <div class="flex flex-wrap justify-center gap-2.5 mb-5 text-xs font-semibold" id="downloadFilters">
                     <button onclick="filterDownloads('MainFile')" id="btn-dl-MainFile" class="px-4 py-2 rounded-xl bg-brand-600 text-white border border-brand-500 transition flex items-center gap-1.5 shadow-md shadow-brand-600/20">
                         <i class="fa-solid fa-file-arrow-down text-emerald-400"></i> Main Files
@@ -219,7 +232,7 @@
                     </button>
                 </div>
 
-                <!-- Dynamic Sub-Category Pills (បង្ហាញប៊ូតុងរងតាម Tool Name នៅទីនេះ សម្រាប់តែ Patch Update និង LDPlayer) -->
+                <!-- Dynamic Sub-Category Pills (សម្រាប់តែ Patch Update និង LDPlayer) -->
                 <div id="downloadSubFilters" class="flex flex-wrap justify-center gap-2 mb-8 text-xs font-medium hidden"></div>
 
                 <div id="customDownloadsList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>

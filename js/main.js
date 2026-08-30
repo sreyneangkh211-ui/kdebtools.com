@@ -11,6 +11,7 @@ const pageTitles = {
     automation: "Kdeb Tools - Kdeb Automation",
     downloads: "Kdeb Tools - Downloads Center",
     tutorials: "Kdeb Tools - Tutorials & News",
+    utilities: "Kdeb Tools - Web Utilities",
     contact: "Kdeb Tools - Contact Support"
 };
 
@@ -23,7 +24,7 @@ function getCleanBasePath() {
 }
 
 function navigateTo(pageId, pushToHistory = true) {
-    const validPages = ['home', 'automation', 'downloads', 'tutorials', 'contact'];
+    const validPages = ['home', 'automation', 'downloads', 'tutorials', 'utilities', 'contact'];
     const activePage = validPages.includes(pageId) ? pageId : 'home';
 
     const syncStyle = document.getElementById('sync-route-style');
@@ -90,7 +91,7 @@ window.playYoutubeVideo = function(containerId, youtubeId) {
 function migrateOldDownloads(dataArray) {
     if (!Array.isArray(dataArray)) return [];
     return dataArray.map(item => {
-        if (item.category === 'Driver') item.category = 'MainFile'; 
+        if (item.category === 'Driver' || item.category === 'APK') item.category = 'MainFile'; 
         else if (item.category === 'Tool') item.category = 'Patch'; 
         if (!item.subCategory) item.subCategory = '';
         return item;
@@ -132,7 +133,7 @@ function getContactTheme(icon) {
 
 window.filterDownloads = function(category, pushToHistory = true) {
     currentDlFilter = category || 'MainFile';
-    currentSubFilter = 'all'; // Reset sub-category ពេលប្តូរ Category មេ
+    currentSubFilter = 'all';
     
     const categories = [
         { id: 'MainFile', icon: 'fa-solid fa-file-arrow-down text-emerald-400', label: 'Main Files' },
@@ -174,16 +175,13 @@ window.openDownloadsCat = function(category, event) {
     filterDownloads(category, true);
 };
 
-// បង្កើតប៊ូតុងរង (Sub-Categories / Tools) សម្រាប់តែប្រភេទណាដែលមាន Sub-Category (ដូចជា Patch Update ឬ LDPlayer)
 function renderSubFilterButtons() {
     const subContainer = document.getElementById('downloadSubFilters');
     if (!subContainer) return;
 
-    // ទាញយកតែ Sub-Category ណាដែលមានក្នុង Category ដែលកំពុងរើស
     const activeItems = globalDownloadsData.filter(d => d.category === currentDlFilter);
     const subList = Array.from(new Set(activeItems.map(d => (d.subCategory || '').trim()).filter(Boolean)));
 
-    // បើសិនជាគ្មាន Sub-Category ទេ (ឧទាហរណ៍ដូចជា Main Files ឬ App APK) គឺលាក់វា
     if (subList.length === 0) {
         subContainer.classList.add('hidden');
         subContainer.innerHTML = '';
@@ -192,7 +190,6 @@ function renderSubFilterButtons() {
 
     subContainer.classList.remove('hidden');
 
-    // ប៊ូតុង All
     const allActive = currentSubFilter === 'all' 
         ? 'bg-purple-600 text-white border-purple-500 shadow-sm shadow-purple-600/30' 
         : 'bg-dark-card/80 text-gray-400 hover:text-white border-dark-border';
@@ -228,7 +225,6 @@ function renderDownloadsGrid() {
 
     let filtered = globalDownloadsData.filter(d => d.category === currentDlFilter);
 
-    // Apply Sub-Category Filter
     if (currentSubFilter !== 'all') {
         filtered = filtered.filter(d => (d.subCategory || '').trim() === currentSubFilter);
     }
