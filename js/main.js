@@ -11,7 +11,6 @@ const pageTitles = {
     automation: "Kdeb Tools - Kdeb Automation",
     downloads: "Kdeb Tools - Downloads Center",
     tutorials: "Kdeb Tools - Tutorials & News",
-    utilities: "Kdeb Tools - Web Utilities",
     contact: "Kdeb Tools - Contact Support"
 };
 
@@ -24,7 +23,7 @@ function getCleanBasePath() {
 }
 
 function navigateTo(pageId, pushToHistory = true) {
-    const validPages = ['home', 'automation', 'downloads', 'tutorials', 'utilities', 'contact'];
+    const validPages = ['home', 'automation', 'downloads', 'tutorials', 'contact'];
     const activePage = validPages.includes(pageId) ? pageId : 'home';
 
     const syncStyle = document.getElementById('sync-route-style');
@@ -91,7 +90,7 @@ window.playYoutubeVideo = function(containerId, youtubeId) {
 function migrateOldDownloads(dataArray) {
     if (!Array.isArray(dataArray)) return [];
     return dataArray.map(item => {
-        if (item.category === 'Driver' || item.category === 'APK') item.category = 'MainFile'; 
+        if (item.category === 'Driver') item.category = 'MainFile'; 
         else if (item.category === 'Tool') item.category = 'Patch'; 
         if (!item.subCategory) item.subCategory = '';
         return item;
@@ -329,11 +328,13 @@ async function renderPublicData() {
     let posts = [];
 
     try {
-        const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest?nocache=${Date.now()}`, {
+        const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest?t=${Date.now()}`, {
             method: 'GET',
+            cache: 'no-store',
             headers: { 
                 'X-Master-Key': API_KEY,
-                'Cache-Control': 'no-cache'
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache'
             }
         });
         

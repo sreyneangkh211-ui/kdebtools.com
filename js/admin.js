@@ -39,11 +39,11 @@ function getAutoFormattedDate() {
     return `${months[now.getMonth()]}-${String(now.getDate()).padStart(2, '0')}-${now.getFullYear()}`;
 }
 
+// Fixed Safe Migration: មិនប្តូរឈ្មោះ Category ណាទាំងអស់ (APK, Patch, MainFile, LDPlayer រក្សាដដែល 100%)
 function migrateOldDownloads(dataArray) {
     if (!Array.isArray(dataArray)) return [];
     return dataArray.map(item => {
-        if (item.category === 'Driver' || item.category === 'APK') item.category = 'MainFile'; 
-        else if (item.category === 'Tool') item.category = 'Patch'; 
+        if (!item.category) item.category = 'MainFile';
         if (!item.date) item.date = getAutoFormattedDate();
         if (!item.notes) item.notes = [];
         if (!item.subCategory) item.subCategory = '';
@@ -62,7 +62,6 @@ function autoFillBtnText(val) {
     else if (val.includes('envelope')) btnInput.value = 'ផ្ញើ Email';
 }
 
-// បង្ហាញ ឬ លាក់ប្រអប់ Sub-Category ទៅតាម Category ដែលបានរើស
 function toggleSubCategoryField() {
     const category = document.getElementById('dCategory')?.value;
     const subContainer = document.getElementById('subCategoryContainer');
@@ -77,7 +76,6 @@ function toggleSubCategoryField() {
     }
 }
 
-// ពេលប្តូរ Category ក្នុង Form គឺ Sync ទៅកាន់ Filter បញ្ជីស្វ័យប្រវត្តិ
 function onCategoryChange() {
     toggleSubCategoryField();
     const cat = document.getElementById('dCategory')?.value;
@@ -86,7 +84,6 @@ function onCategoryChange() {
     }
 }
 
-// Function សម្រាប់ Filter បញ្ជី File ក្នុង Admin
 function setAdminDlFilter(category) {
     currentAdminDlFilter = category;
     
@@ -147,9 +144,14 @@ function logout() {
 
 async function loadAdminData() {
     try {
-        const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest?nocache=${Date.now()}`, {
+        const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest?t=${Date.now()}`, {
             method: 'GET',
-            headers: { 'X-Master-Key': API_KEY }
+            cache: 'no-store',
+            headers: { 
+                'X-Master-Key': API_KEY,
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache'
+            }
         });
         if (response.ok) {
             const result = await response.json();
@@ -240,7 +242,7 @@ function getYoutubeId(url) {
 
 // ================= 3. CRUD FUNCTIONS =================
 
-function saveFunctionGroup(e) {
+async function saveFunctionGroup(e) {
     e.preventDefault();
     const editId = document.getElementById('fnEditId').value;
     const itemsArray = document.getElementById('fnItems').value.split('\n').map(i => i.trim().replace(/^•\s*/, '')).filter(i => i.length > 0);
@@ -260,7 +262,8 @@ function saveFunctionGroup(e) {
             items: itemsArray
         });
     }
-    if (syncAll()) {
+    const success = await syncAll();
+    if (success) {
         alert(editId ? 'កែសម្រួលជោគជ័យ!' : 'បន្ថែមជោគជ័យ!');
         resetFunctionForm();
     }
@@ -287,8 +290,7 @@ function resetFunctionForm() {
     document.getElementById('fnCancelBtn').classList.add('hidden');
 }
 
-// Contact Support CRUD
-function saveContact(e) {
+async function saveContact(e) {
     e.preventDefault();
     const editId = document.getElementById('cEditId').value;
     const title = document.getElementById('cTitle').value.trim();
@@ -306,7 +308,8 @@ function saveContact(e) {
         contacts.push({ id: Date.now(), title, desc, icon, btnText, link });
     }
 
-    if (syncAll()) {
+    const success = await syncAll();
+    if (success) {
         alert(editId ? 'កែសម្រួលជោគជ័យ!' : 'រក្សាទុកជោគជ័យ!');
         resetContactForm();
     }
@@ -337,7 +340,7 @@ function resetContactForm() {
 }
 
 // Download Files CRUD
-function saveDownload(e) {
+async function saveDownload(e) {
     e.preventDefault();
     const editId = document.getElementById('dlEditId').value;
     const fileUrl = document.getElementById('dLink').value.trim();
@@ -379,10 +382,10 @@ function saveDownload(e) {
         });
     }
     
-    // ប្តូរ Filter ទៅតាម Category ដែលទើបបញ្ចូល
     currentAdminDlFilter = category;
 
-    if (syncAll()) {
+    const success = await syncAll();
+    if (success) {
         alert(editId ? 'កែសម្រួលជោគជ័យ!' : 'រក្សាទុកជោគជ័យ!');
         resetDownloadForm();
     }
@@ -422,7 +425,7 @@ function resetDownloadForm() {
     document.getElementById('dlCancelBtn').classList.add('hidden');
 }
 
-function savePost(e) {
+async function savePost(e) {
     e.preventDefault();
     const editId = document.getElementById('postEditId').value;
     const youtubeLink = document.getElementById('pYoutubeLink').value.trim();
@@ -450,7 +453,8 @@ function savePost(e) {
             date: new Date().toLocaleDateString('en-GB')
         });
     }
-    if (syncAll()) {
+    const success = await syncAll();
+    if (success) {
         alert(editId ? 'កែសម្រួលជោគជ័យ!' : 'បង្ហោះជោគជ័យ!');
         resetPostForm();
     }
@@ -477,19 +481,18 @@ function resetPostForm() {
     document.getElementById('postCancelBtn').classList.add('hidden');
 }
 
-function removeItem(type, id) {
+async function removeItem(type, id) {
     if (!confirm('តើអ្នកពិតជាចង់លុបទិន្នន័យនេះមែនទេ?')) return;
     if (type === 'function') functionsList = functionsList.filter(f => f.id != id);
     if (type === 'contact') contacts = contacts.filter(c => c.id != id);
     if (type === 'download') downloads = downloads.filter(d => d.id != id);
     if (type === 'post') posts = posts.filter(p => p.id != id);
-    syncAll();
+    await syncAll();
 }
 
 // ================= 4. RENDER UI =================
 
 function renderDownloadsList() {
-    // រាប់ចំនួន Files តាមប្រភេទ
     const cntAll = downloads.length;
     const cntMain = downloads.filter(d => d.category === 'MainFile').length;
     const cntPatch = downloads.filter(d => d.category === 'Patch').length;
@@ -502,7 +505,6 @@ function renderDownloadsList() {
     if (document.getElementById('cnt-admin-APK')) document.getElementById('cnt-admin-APK').innerText = cntApk;
     if (document.getElementById('cnt-admin-LDPlayer')) document.getElementById('cnt-admin-LDPlayer').innerText = cntLd;
 
-    // Filter បញ្ជីតាមការជ្រើសរើស
     const filtered = (currentAdminDlFilter === 'all') 
         ? downloads 
         : downloads.filter(d => d.category === currentAdminDlFilter);
