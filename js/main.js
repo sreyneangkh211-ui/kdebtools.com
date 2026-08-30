@@ -1,6 +1,6 @@
 // =========================================================
 //                   FILE: js/main.js
-//       (ប្រព័ន្ធ Router, Sub-Category Filter & SEO Title)
+//       (ប្រព័ន្ធ Router, Sub-Category Filter & Password Copy)
 // =========================================================
 
 const BIN_ID = "6a917cb3da38895dfe1c169c";
@@ -21,6 +21,22 @@ function getCleanBasePath() {
     }
     return path === '' ? '/' : path;
 }
+
+// មុខងារ Copy Password ពន្លា File លើ Home Feed
+window.copyExtractPassword = function(btn) {
+    navigator.clipboard.writeText('kdebtools').then(() => {
+        if (!btn) return;
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = '<i class="fa-solid fa-check"></i> <span>Copied!</span>';
+        btn.classList.remove('bg-yellow-500', 'hover:bg-yellow-400', 'text-black');
+        btn.classList.add('bg-emerald-500', 'text-white');
+        setTimeout(() => {
+            btn.innerHTML = originalHtml;
+            btn.classList.remove('bg-emerald-500', 'text-white');
+            btn.classList.add('bg-yellow-500', 'hover:bg-yellow-400', 'text-black');
+        }, 2000);
+    });
+};
 
 function navigateTo(pageId, pushToHistory = true) {
     const validPages = ['home', 'automation', 'downloads', 'tutorials', 'contact'];
@@ -87,7 +103,6 @@ window.playYoutubeVideo = function(containerId, youtubeId) {
     }
 };
 
-// Fixed Safe Migration: រក្សាទុកប្រភេទ APK, Patch, MainFile, LDPlayer ដដែល 100% មិនកាត់ទៅ MainFile ទៀតឡើយ
 function migrateOldDownloads(dataArray) {
     if (!Array.isArray(dataArray)) return [];
     return dataArray.map(item => {
