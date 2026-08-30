@@ -145,9 +145,14 @@ function logout() {
 
 async function loadAdminData() {
     try {
-        const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest?nocache=${Date.now()}`, {
+        const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest?t=${Date.now()}`, {
             method: 'GET',
-            headers: { 'X-Master-Key': API_KEY }
+            cache: 'no-store',
+            headers: { 
+                'X-Master-Key': API_KEY,
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache'
+            }
         });
         if (response.ok) {
             const result = await response.json();
@@ -336,7 +341,7 @@ function resetContactForm() {
     document.getElementById('contactCancelBtn').classList.add('hidden');
 }
 
-// Download Files CRUD (Async/Await ត្រឹមត្រូវ)
+// Download Files CRUD
 async function saveDownload(e) {
     e.preventDefault();
     const editId = document.getElementById('dlEditId').value;

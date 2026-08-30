@@ -87,7 +87,6 @@ window.playYoutubeVideo = function(containerId, youtubeId) {
     }
 };
 
-// Fixed Migration: មិនកាត់ APK ទៅ MainFile ទៀតឡើយ
 function migrateOldDownloads(dataArray) {
     if (!Array.isArray(dataArray)) return [];
     return dataArray.map(item => {
@@ -329,11 +328,13 @@ async function renderPublicData() {
     let posts = [];
 
     try {
-        const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest?nocache=${Date.now()}`, {
+        const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest?t=${Date.now()}`, {
             method: 'GET',
+            cache: 'no-store',
             headers: { 
                 'X-Master-Key': API_KEY,
-                'Cache-Control': 'no-cache'
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache'
             }
         });
         
