@@ -87,11 +87,11 @@ window.playYoutubeVideo = function(containerId, youtubeId) {
     }
 };
 
+// Fixed Safe Migration: រក្សាទុកប្រភេទ APK, Patch, MainFile, LDPlayer ដដែល 100% មិនកាត់ទៅ MainFile ទៀតឡើយ
 function migrateOldDownloads(dataArray) {
     if (!Array.isArray(dataArray)) return [];
     return dataArray.map(item => {
-        if (item.category === 'Driver') item.category = 'MainFile'; 
-        else if (item.category === 'Tool') item.category = 'Patch'; 
+        if (!item.category) item.category = 'MainFile';
         if (!item.subCategory) item.subCategory = '';
         return item;
     });
