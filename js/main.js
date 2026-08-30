@@ -1,6 +1,6 @@
 // =========================================================
 //                   FILE: js/main.js
-//       (ប្រព័ន្ធ Router, SEO Title & Dynamic Contact Support)
+//       (ប្រព័ន្ធ Router, Sub-Category Filter & SEO Title)
 // =========================================================
 
 const BIN_ID = "6a917cb3da38895dfe1c169c";
@@ -70,6 +70,7 @@ window.addEventListener('popstate', (e) => {
 
 let globalDownloadsData = [];
 let currentDlFilter = 'MainFile';
+let currentSubFilter = 'all';
 
 window.playYoutubeVideo = function(containerId, youtubeId) {
     const container = document.getElementById(containerId);
@@ -91,6 +92,7 @@ function migrateOldDownloads(dataArray) {
     return dataArray.map(item => {
         if (item.category === 'Driver') item.category = 'MainFile'; 
         else if (item.category === 'Tool') item.category = 'Patch'; 
+        if (!item.subCategory) item.subCategory = '';
         return item;
     });
 }
@@ -116,7 +118,6 @@ function getFunctionBoxTheme(icon, index) {
     return palette[index % palette.length];
 }
 
-// Styling សម្រាប់ប្រភេទ Contact Cards
 function getContactTheme(icon) {
     if (icon.includes('telegram')) return { iconColor: 'text-[#229ED9]', iconBg: 'bg-[#229ED9]/10 border-[#229ED9]/20', btnBg: 'bg-[#229ED9] hover:bg-[#1f8ec4] text-white' };
     if (icon.includes('youtube')) return { iconColor: 'text-[#FF0000]', iconBg: 'bg-red-500/10 border-red-500/20', btnBg: 'bg-red-600 hover:bg-red-500 text-white' };
@@ -127,8 +128,11 @@ function getContactTheme(icon) {
     return { iconColor: 'text-brand-400', iconBg: 'bg-brand-500/10 border-brand-500/20', btnBg: 'bg-brand-600 hover:bg-brand-500 text-white' };
 }
 
+// ----------------- Filter System -----------------
+
 window.filterDownloads = function(category, pushToHistory = true) {
     currentDlFilter = category || 'MainFile';
+    currentSubFilter = 'all'; // Reset sub-category ពេលប្តូរ Category មេ
     
     const categories = [
         { id: 'MainFile', icon: 'fa-solid fa-file-arrow-down text-emerald-400', label: 'Main Files' },
@@ -154,6 +158,13 @@ window.filterDownloads = function(category, pushToHistory = true) {
         history.pushState({ page: 'downloads', cat: currentDlFilter }, '', prefix + `?view=downloads&cat=${currentDlFilter}`);
     }
     
+    renderSubFilterButtons();
+    renderDownloadsGrid();
+};
+
+window.filterSubCategory = function(subCat) {
+    currentSubFilter = subCat;
+    renderSubFilterButtons();
     renderDownloadsGrid();
 };
 
@@ -163,11 +174,64 @@ window.openDownloadsCat = function(category, event) {
     filterDownloads(category, true);
 };
 
+// បង្កើតប៊ូតុងរង (Sub-Categories / Tools) សម្រាប់តែប្រភេទណាដែលមាន Sub-Category (ដូចជា Patch Update ឬ LDPlayer)
+function renderSubFilterButtons() {
+    const subContainer = document.getElementById('downloadSubFilters');
+    if (!subContainer) return;
+
+    // ទាញយកតែ Sub-Category ណាដែលមានក្នុង Category ដែលកំពុងរើស
+    const activeItems = globalDownloadsData.filter(d => d.category === currentDlFilter);
+    const subList = Array.from(new Set(activeItems.map(d => (d.subCategory || '').trim()).filter(Boolean)));
+
+    // បើសិនជាគ្មាន Sub-Category ទេ (ឧទាហរណ៍ដូចជា Main Files ឬ App APK) គឺលាក់វា
+    if (subList.length === 0) {
+        subContainer.classList.add('hidden');
+        subContainer.innerHTML = '';
+        return;
+    }
+
+    subContainer.classList.remove('hidden');
+
+    // ប៊ូតុង All
+    const allActive = currentSubFilter === 'all' 
+        ? 'bg-purple-600 text-white border-purple-500 shadow-sm shadow-purple-600/30' 
+        : 'bg-dark-card/80 text-gray-400 hover:text-white border-dark-border';
+
+    let html = `
+        <button onclick="filterSubCategory('all')" class="px-3 py-1.5 rounded-lg border text-xs transition flex items-center gap-1 ${allActive}">
+            <i class="fa-solid fa-cubes text-[11px]"></i> ទាំងអស់ (${activeItems.length})
+        </button>
+    `;
+
+    subList.forEach(sub => {
+        const count = activeItems.filter(d => (d.subCategory || '').trim() === sub).length;
+        const isActive = currentSubFilter === sub;
+        const btnClass = isActive 
+            ? 'bg-purple-600 text-white border-purple-500 shadow-sm shadow-purple-600/30 font-semibold' 
+            : 'bg-dark-card/80 text-gray-400 hover:text-white border-dark-border hover:border-purple-500/40';
+
+        html += `
+            <button onclick="filterSubCategory('${sub}')" class="px-3 py-1.5 rounded-lg border text-xs transition flex items-center gap-1.5 ${btnClass}">
+                <i class="fa-solid fa-tag text-[10px] ${isActive ? 'text-white' : 'text-purple-400'}"></i>
+                <span>${sub}</span>
+                <span class="text-[10px] px-1.5 py-0.2 rounded-full ${isActive ? 'bg-white/20 text-white' : 'bg-dark-bg text-gray-400'}">${count}</span>
+            </button>
+        `;
+    });
+
+    subContainer.innerHTML = html;
+}
+
 function renderDownloadsGrid() {
     const dlContainer = document.getElementById('customDownloadsList');
     if (!dlContainer) return;
 
-    const filtered = globalDownloadsData.filter(d => d.category === currentDlFilter);
+    let filtered = globalDownloadsData.filter(d => d.category === currentDlFilter);
+
+    // Apply Sub-Category Filter
+    if (currentSubFilter !== 'all') {
+        filtered = filtered.filter(d => (d.subCategory || '').trim() === currentSubFilter);
+    }
 
     let ldHeaderHtml = '';
     if (currentDlFilter === 'LDPlayer') {
@@ -192,7 +256,7 @@ function renderDownloadsGrid() {
         dlContainer.innerHTML = ldHeaderHtml + `
             <div class="text-gray-500 text-center text-xs col-span-1 md:col-span-2 py-12 flex flex-col items-center justify-center gap-2">
                 <i class="fa-regular fa-folder-open text-2xl text-gray-600"></i>
-                <span>គ្មានឯកសារនៅក្នុងប្រភេទនេះនៅឡើយទេ</span>
+                <span>គ្មានឯកសារនៅក្នុងជម្រើសនេះនៅឡើយទេ</span>
             </div>
         `;
         return;
@@ -226,9 +290,10 @@ function renderDownloadsGrid() {
         ` : '';
 
         const dateTag = d.date ? `<span class="text-[11px] font-medium text-gray-400 ml-1.5">${d.date}</span>` : '';
+        const subCategoryBadge = d.subCategory ? `<span class="text-[10px] bg-purple-500/15 text-purple-300 border border-purple-500/30 px-2 py-0.5 rounded font-medium">🏷️ ${d.subCategory}</span>` : '';
 
         return `
-            <div class="bg-dark-card border border-dark-border rounded-2xl p-4 sm:p-5 flex flex-col justify-between hover:border-brand-500/40 transition">
+            <div class="bg-dark-card border border-dark-border rounded-2xl p-4 sm:p-5 flex flex-col justify-between hover:border-brand-500/40 transition shadow-lg">
                 <div>
                     <div class="flex items-center justify-between gap-3">
                         <div class="flex items-center gap-3">
@@ -240,8 +305,9 @@ function renderDownloadsGrid() {
                                     <span>${d.name}</span>
                                     ${dateTag}
                                 </h4>
-                                <div class="flex items-center gap-2 mt-0.5">
+                                <div class="flex items-center gap-2 mt-1 flex-wrap">
                                     <span class="text-[10px] bg-brand-500/10 text-brand-300 px-1.5 py-0.5 rounded border border-brand-500/20">${catLabel}</span>
+                                    ${subCategoryBadge}
                                     <span class="text-[11px] text-gray-500">${d.size || ''}</span>
                                 </div>
                             </div>
@@ -259,7 +325,8 @@ function renderDownloadsGrid() {
     dlContainer.innerHTML = ldHeaderHtml + cardsHtml;
 }
 
-// RENDER ALL DATA
+// ----------------- Load & Render All Data -----------------
+
 async function renderPublicData() {
     let functionsList = [];
     let contactsList = [];
@@ -287,9 +354,10 @@ async function renderPublicData() {
         console.error("Fetch Data Error:", err);
     }
 
+    renderSubFilterButtons();
     renderDownloadsGrid();
 
-    // 1. IMPORTANT FUNCTIONS (Grid មានសណ្តាប់ធ្នាប់ ឆ្វេងទៅស្តាំ)
+    // 1. IMPORTANT FUNCTIONS
     const fnContainer = document.getElementById('importantFunctionsGrid');
     if (fnContainer) {
         if (functionsList.length === 0) {
@@ -326,7 +394,7 @@ async function renderPublicData() {
         }
     }
 
-    // 2. CONTACT SUPPORT (ទាញទិន្នន័យ Dynamic ពី Admin)
+    // 2. CONTACT SUPPORT
     const contactContainer = document.getElementById('customContactsList');
     if (contactContainer) {
         if (contactsList.length === 0) {

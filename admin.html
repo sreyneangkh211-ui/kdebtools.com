@@ -81,7 +81,7 @@
             </div>
         </div>
 
-        <!-- TABS (ប្តូរ Featured Tools ទៅជា Contact Support) -->
+        <!-- TABS -->
         <div class="flex flex-wrap gap-2 mb-6 border-b border-dark-border pb-4">
             <button onclick="switchAdminTab('functions')" id="tab-functions" class="tab-btn active bg-dark-card border border-dark-border text-gray-300 hover:text-white px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2">
                 <i class="fa-solid fa-list-check text-yellow-400"></i> Important Functions <span id="count-functions" class="bg-dark-bg px-2 py-0.5 rounded-full text-[10px]">0</span>
@@ -134,7 +134,7 @@
             </div>
         </div>
 
-        <!-- TAB 2: CONTACT SUPPORT (បង្កើត/កែប្រែ Channel ទំនាក់ទំនង) -->
+        <!-- TAB 2: CONTACT SUPPORT -->
         <div id="content-contacts" class="admin-tab-content hidden grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="bg-dark-card p-6 rounded-2xl border border-dark-border h-fit">
                 <div class="flex items-center justify-between mb-4">
@@ -197,14 +197,22 @@
                         <input type="text" id="dName" placeholder="ឈ្មោះ File..." required class="w-full bg-dark-bg border border-dark-border rounded-lg p-2.5 text-white outline-none focus:border-emerald-500">
                     </div>
                     <div>
-                        <label class="block text-gray-300 font-semibold mb-1">ប្រភេទ Category</label>
-                        <select id="dCategory" class="w-full bg-dark-bg border border-dark-border rounded-lg p-2.5 text-white outline-none focus:border-emerald-500">
+                        <label class="block text-gray-300 font-semibold mb-1">ប្រភេទ Category មេ</label>
+                        <select id="dCategory" onchange="onCategoryChange()" class="w-full bg-dark-bg border border-dark-border rounded-lg p-2.5 text-white outline-none focus:border-emerald-500">
                             <option value="MainFile">Main Files</option>
                             <option value="Patch">Patch Update</option>
                             <option value="APK">App APK</option>
                             <option value="LDPlayer">Download LDPlayer</option>
                         </select>
                     </div>
+                    
+                    <!-- ប៊ូតុងរង / Sub-Category (Tool Name Filter) -> បង្ហាញតែពេលរើស Patch Update ឬ Download LDPlayer -->
+                    <div id="subCategoryContainer" class="hidden">
+                        <label class="block text-gray-300 font-semibold mb-1">ឈ្មោះ Tool / Sub-Category (សម្រាប់បំបែកប៊ូតុង Filter)</label>
+                        <input type="text" id="dSubCategory" placeholder="ឧ. Kdeb Nexus, TikTok Tool, LDPlayer 9..." class="w-full bg-dark-bg border border-dark-border rounded-lg p-2.5 text-white outline-none focus:border-emerald-500">
+                        <span class="text-[10px] text-gray-400">កំណត់សម្គាល់៖ បង្កើតប៊ូតុងរង Filter នៅលើគេហទំព័រ</span>
+                    </div>
+
                     <div>
                         <label class="block text-gray-300 font-semibold mb-1">ទំហំ File</label>
                         <input type="text" id="dSize" placeholder="ឧ. 45 MB" class="w-full bg-dark-bg border border-dark-border rounded-lg p-2.5 text-white outline-none focus:border-emerald-500">
@@ -220,9 +228,35 @@
                     <button type="submit" id="dlSubmitBtn" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 rounded-lg transition mt-2">+ រក្សាទុក File</button>
                 </form>
             </div>
-            <div class="lg:col-span-2 bg-dark-card p-6 rounded-2xl border border-dark-border">
-                <h3 class="text-sm font-bold text-white mb-4">បញ្ជី File Download</h3>
-                <div id="list-downloads" class="space-y-3 text-xs"></div>
+            
+            <!-- បញ្ជី File Download + Filter Buttons តាម Category ក្នុង Admin -->
+            <div class="lg:col-span-2 bg-dark-card p-6 rounded-2xl border border-dark-border flex flex-col">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-dark-border/60">
+                    <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-folder-tree text-emerald-400"></i> បញ្ជី File Download
+                    </h3>
+                    
+                    <!-- Admin Category Filter Pills -->
+                    <div class="flex flex-wrap gap-1.5 text-[11px]" id="adminDlFilters">
+                        <button type="button" onclick="setAdminDlFilter('all')" id="btn-admin-dl-all" class="px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-bold transition flex items-center gap-1">
+                            <span>ទាំងអស់</span> (<span id="cnt-admin-all">0</span>)
+                        </button>
+                        <button type="button" onclick="setAdminDlFilter('MainFile')" id="btn-admin-dl-MainFile" class="px-2.5 py-1 rounded-lg bg-dark-bg text-gray-400 hover:text-white border border-dark-border transition flex items-center gap-1">
+                            <span>Main Files</span> (<span id="cnt-admin-MainFile">0</span>)
+                        </button>
+                        <button type="button" onclick="setAdminDlFilter('Patch')" id="btn-admin-dl-Patch" class="px-2.5 py-1 rounded-lg bg-dark-bg text-gray-400 hover:text-white border border-dark-border transition flex items-center gap-1">
+                            <span>Patch</span> (<span id="cnt-admin-Patch">0</span>)
+                        </button>
+                        <button type="button" onclick="setAdminDlFilter('APK')" id="btn-admin-dl-APK" class="px-2.5 py-1 rounded-lg bg-dark-bg text-gray-400 hover:text-white border border-dark-border transition flex items-center gap-1">
+                            <span>APK</span> (<span id="cnt-admin-APK">0</span>)
+                        </button>
+                        <button type="button" onclick="setAdminDlFilter('LDPlayer')" id="btn-admin-dl-LDPlayer" class="px-2.5 py-1 rounded-lg bg-dark-bg text-gray-400 hover:text-white border border-dark-border transition flex items-center gap-1">
+                            <span>LDPlayer</span> (<span id="cnt-admin-LDPlayer">0</span>)
+                        </button>
+                    </div>
+                </div>
+
+                <div id="list-downloads" class="space-y-3 text-xs flex-grow"></div>
             </div>
         </div>
 

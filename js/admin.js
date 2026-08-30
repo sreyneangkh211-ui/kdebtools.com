@@ -18,8 +18,9 @@ const defaultContacts = [
 ];
 
 const defaultDownloads = [
-    { id: 1, name: "LDPlayer 9 Clean Optimized", category: "LDPlayer", size: "620 MB", link: "https://example.com/ld9.exe", date: "Aug-17-2026", notes: [] },
-    { id: 2, name: "Main Kdeb Nexus Setup", category: "MainFile", size: "45 MB", link: "https://example.com/setup.exe", date: "Aug-17-2026", notes: [] }
+    { id: 1, name: "Main Kdeb Nexus Setup", category: "MainFile", subCategory: "", size: "45 MB", link: "https://example.com/setup.exe", date: "Aug-17-2026", notes: ["Full Setup for Kdeb Nexus"] },
+    { id: 2, name: "Patch Update v1.0.8", category: "Patch", subCategory: "Kdeb Nexus", size: "6.71 MB", link: "https://example.com/patch1.zip", date: "Aug-18-2026", notes: ["Fix Login", "Fix Auto Share"] },
+    { id: 3, name: "LDPlayer 9 Clean Optimized", category: "LDPlayer", subCategory: "LDPlayer 9", size: "620 MB", link: "https://example.com/ld9.exe", date: "Aug-17-2026", notes: [] }
 ];
 
 const defaultPosts = [
@@ -30,6 +31,7 @@ let functionsList = [];
 let contacts = [];
 let downloads = [];
 let posts = [];
+let currentAdminDlFilter = 'all';
 
 function getAutoFormattedDate() {
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -44,6 +46,7 @@ function migrateOldDownloads(dataArray) {
         else if (item.category === 'Tool') item.category = 'Patch'; 
         if (!item.date) item.date = getAutoFormattedDate();
         if (!item.notes) item.notes = [];
+        if (!item.subCategory) item.subCategory = '';
         return item;
     });
 }
@@ -57,6 +60,49 @@ function autoFillBtnText(val) {
     else if (val.includes('tiktok')) btnInput.value = 'ទស្សនាលើ TikTok';
     else if (val.includes('phone')) btnInput.value = 'ខលទាក់ទងផ្ទាល់';
     else if (val.includes('envelope')) btnInput.value = 'ផ្ញើ Email';
+}
+
+// បង្ហាញ ឬ លាក់ប្រអប់ Sub-Category ទៅតាម Category ដែលបានរើស
+function toggleSubCategoryField() {
+    const category = document.getElementById('dCategory')?.value;
+    const subContainer = document.getElementById('subCategoryContainer');
+    if (!subContainer) return;
+
+    if (category === 'Patch' || category === 'LDPlayer') {
+        subContainer.classList.remove('hidden');
+    } else {
+        subContainer.classList.add('hidden');
+        const subInput = document.getElementById('dSubCategory');
+        if (subInput) subInput.value = '';
+    }
+}
+
+// ពេលប្តូរ Category ក្នុង Form គឺ Sync ទៅកាន់ Filter បញ្ជីស្វ័យប្រវត្តិ
+function onCategoryChange() {
+    toggleSubCategoryField();
+    const cat = document.getElementById('dCategory')?.value;
+    if (cat) {
+        setAdminDlFilter(cat);
+    }
+}
+
+// Function សម្រាប់ Filter បញ្ជី File ក្នុង Admin
+function setAdminDlFilter(category) {
+    currentAdminDlFilter = category;
+    
+    const cats = ['all', 'MainFile', 'Patch', 'APK', 'LDPlayer'];
+    cats.forEach(c => {
+        const btn = document.getElementById(`btn-admin-dl-${c}`);
+        if (btn) {
+            if (c === currentAdminDlFilter) {
+                btn.className = "px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-bold transition flex items-center gap-1 shadow-sm shadow-emerald-600/30";
+            } else {
+                btn.className = "px-2.5 py-1 rounded-lg bg-dark-bg text-gray-400 hover:text-white border border-dark-border transition flex items-center gap-1";
+            }
+        }
+    });
+
+    renderDownloadsList();
 }
 
 // ================= 1. AUTHENTICATION =================
@@ -290,10 +336,17 @@ function resetContactForm() {
     document.getElementById('contactCancelBtn').classList.add('hidden');
 }
 
+// Download Files CRUD
 function saveDownload(e) {
     e.preventDefault();
     const editId = document.getElementById('dlEditId').value;
     const fileUrl = document.getElementById('dLink').value.trim();
+    const category = document.getElementById('dCategory').value;
+    
+    const subCategory = (category === 'Patch' || category === 'LDPlayer') 
+        ? (document.getElementById('dSubCategory')?.value.trim() || '') 
+        : '';
+        
     const rawNotes = document.getElementById('dNotes')?.value || '';
     const notesArray = rawNotes.split('\n').map(n => n.trim().replace(/^[-•▪*]\s*/, '')).filter(n => n.length > 0);
 
@@ -306,7 +359,8 @@ function saveDownload(e) {
         const idx = downloads.findIndex(d => d.id == editId);
         if (idx !== -1) {
             downloads[idx].name = document.getElementById('dName').value;
-            downloads[idx].category = document.getElementById('dCategory').value;
+            downloads[idx].category = category;
+            downloads[idx].subCategory = subCategory;
             downloads[idx].size = document.getElementById('dSize').value || 'Direct File';
             downloads[idx].link = fileUrl;
             downloads[idx].notes = notesArray;
@@ -316,13 +370,18 @@ function saveDownload(e) {
         downloads.unshift({
             id: Date.now(),
             name: document.getElementById('dName').value,
-            category: document.getElementById('dCategory').value,
+            category: category,
+            subCategory: subCategory,
             size: document.getElementById('dSize').value || 'Direct File',
             link: fileUrl,
             date: getAutoFormattedDate(),
             notes: notesArray
         });
     }
+    
+    // ប្តូរ Filter ទៅតាម Category ដែលទើបបញ្ចូល
+    currentAdminDlFilter = category;
+
     if (syncAll()) {
         alert(editId ? 'កែសម្រួលជោគជ័យ!' : 'រក្សាទុកជោគជ័យ!');
         resetDownloadForm();
@@ -337,6 +396,12 @@ function editDownload(id) {
     document.getElementById('dCategory').value = item.category;
     document.getElementById('dSize').value = item.size || '';
     document.getElementById('dLink').value = item.link || '';
+    
+    toggleSubCategoryField();
+    if (document.getElementById('dSubCategory')) {
+        document.getElementById('dSubCategory').value = item.subCategory || '';
+    }
+
     if (document.getElementById('dNotes')) {
         document.getElementById('dNotes').value = (item.notes || []).join('\n');
     }
@@ -349,7 +414,9 @@ function editDownload(id) {
 function resetDownloadForm() {
     document.getElementById('dlForm').reset();
     document.getElementById('dlEditId').value = '';
+    if (document.getElementById('dSubCategory')) document.getElementById('dSubCategory').value = '';
     if (document.getElementById('dNotes')) document.getElementById('dNotes').value = '';
+    toggleSubCategoryField();
     document.getElementById('dlFormTitle').innerHTML = '<i class="fa-solid fa-plus-circle"></i> Upload / បន្ថែម File';
     document.getElementById('dlSubmitBtn').innerText = '+ រក្សាទុក File';
     document.getElementById('dlCancelBtn').classList.add('hidden');
@@ -421,6 +488,63 @@ function removeItem(type, id) {
 
 // ================= 4. RENDER UI =================
 
+function renderDownloadsList() {
+    // រាប់ចំនួន Files តាមប្រភេទ
+    const cntAll = downloads.length;
+    const cntMain = downloads.filter(d => d.category === 'MainFile').length;
+    const cntPatch = downloads.filter(d => d.category === 'Patch').length;
+    const cntApk = downloads.filter(d => d.category === 'APK').length;
+    const cntLd = downloads.filter(d => d.category === 'LDPlayer').length;
+
+    if (document.getElementById('cnt-admin-all')) document.getElementById('cnt-admin-all').innerText = cntAll;
+    if (document.getElementById('cnt-admin-MainFile')) document.getElementById('cnt-admin-MainFile').innerText = cntMain;
+    if (document.getElementById('cnt-admin-Patch')) document.getElementById('cnt-admin-Patch').innerText = cntPatch;
+    if (document.getElementById('cnt-admin-APK')) document.getElementById('cnt-admin-APK').innerText = cntApk;
+    if (document.getElementById('cnt-admin-LDPlayer')) document.getElementById('cnt-admin-LDPlayer').innerText = cntLd;
+
+    // Filter បញ្ជីតាមការជ្រើសរើស
+    const filtered = (currentAdminDlFilter === 'all') 
+        ? downloads 
+        : downloads.filter(d => d.category === currentAdminDlFilter);
+
+    const listDl = document.getElementById('list-downloads');
+    if (!listDl) return;
+
+    if (filtered.length === 0) {
+        listDl.innerHTML = `<div class="text-gray-500 text-center py-10">គ្មានឯកសារនៅក្នុងប្រភេទនេះទេ</div>`;
+        return;
+    }
+
+    listDl.innerHTML = filtered.map(d => {
+        const notesList = (d.notes && d.notes.length > 0) 
+            ? `<ul class="mt-2 space-y-0.5 text-[11px] text-gray-400">${d.notes.map(n => `<li>▪ ${n}</li>`).join('')}</ul>` 
+            : '';
+        const subBadge = d.subCategory ? `<span class="text-[10px] bg-purple-500/15 text-purple-300 border border-purple-500/30 px-2 py-0.5 rounded font-bold">🏷️ ${d.subCategory}</span>` : '';
+        return `
+            <div class="p-3.5 bg-dark-bg border border-dark-border rounded-xl hover:border-emerald-500/30 transition">
+                <div class="flex justify-between items-start gap-2">
+                    <div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h4 class="font-bold text-white text-sm">${d.name}</h4>
+                            <span class="text-[10px] text-gray-400 bg-dark-card px-2 py-0.5 rounded border border-dark-border">${d.date || ''}</span>
+                            ${subBadge}
+                        </div>
+                        <div class="mt-1 flex items-center gap-2">
+                            <span class="text-[10px] bg-brand-500/10 text-brand-300 px-1.5 py-0.5 rounded">${d.category}</span>
+                            <span class="text-[11px] text-gray-500">${d.size || ''}</span>
+                        </div>
+                        ${notesList}
+                    </div>
+                    <div class="flex gap-2 flex-shrink-0">
+                        <button onclick="editDownload(${d.id})" class="text-blue-400 bg-blue-500/10 px-2.5 py-1 rounded border border-blue-500/20"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="removeItem('download', ${d.id})" class="text-red-400 bg-red-500/10 px-2.5 py-1 rounded border border-red-500/20"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
 function renderAllTabs() {
     document.getElementById('count-functions').innerText = functionsList.length;
     document.getElementById('count-contacts').innerText = contacts.length;
@@ -469,35 +593,7 @@ function renderAllTabs() {
     }
 
     // 3. Downloads
-    const listDl = document.getElementById('list-downloads');
-    if (listDl) {
-        listDl.innerHTML = downloads.map(d => {
-            const notesList = (d.notes && d.notes.length > 0) 
-                ? `<ul class="mt-2 space-y-0.5 text-[11px] text-gray-400">${d.notes.map(n => `<li>▪ ${n}</li>`).join('')}</ul>` 
-                : '';
-            return `
-                <div class="p-3.5 bg-dark-bg border border-dark-border rounded-xl">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <div class="flex items-center gap-2">
-                                <h4 class="font-bold text-white text-sm">${d.name}</h4>
-                                <span class="text-[10px] text-gray-400 bg-dark-card px-2 py-0.5 rounded border border-dark-border">${d.date || ''}</span>
-                            </div>
-                            <div class="mt-1 flex items-center gap-2">
-                                <span class="text-[10px] bg-brand-500/10 text-brand-300 px-1.5 py-0.5 rounded">${d.category}</span>
-                                <span class="text-[11px] text-gray-500">${d.size || ''}</span>
-                            </div>
-                            ${notesList}
-                        </div>
-                        <div class="flex gap-2">
-                            <button onclick="editDownload(${d.id})" class="text-blue-400 bg-blue-500/10 px-2.5 py-1 rounded border border-blue-500/20"><i class="fa-solid fa-pen"></i></button>
-                            <button onclick="removeItem('download', ${d.id})" class="text-red-400 bg-red-500/10 px-2.5 py-1 rounded border border-red-500/20"><i class="fa-solid fa-trash"></i></button>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }).join('') || '<p class="text-gray-500 text-xs">គ្មានទិន្នន័យ</p>';
-    }
+    renderDownloadsList();
 
     // 4. Tutorials
     const listTt = document.getElementById('list-tutorials');
@@ -523,4 +619,7 @@ function renderAllTabs() {
     }
 }
 
-window.addEventListener('DOMContentLoaded', checkAuthOnLoad);
+window.addEventListener('DOMContentLoaded', () => {
+    checkAuthOnLoad();
+    toggleSubCategoryField();
+});
