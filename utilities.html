@@ -11,8 +11,8 @@
 
     <!-- SEO Meta Tags -->
     <title>Kdeb Tools - Web Toolbox (ឧបករណ៍ជំនួយរហ័ស)</title>
-    <meta name="description" content="Kdeb Tools Web Toolbox - 2FA Live Code Generator, Facebook UID Live Checker, My IP Address & ISP Analyzer.">
-    <meta name="keywords" content="Kdeb Tools, kdeb tools, 2FA live generator, UID live checker, IP address checker, web toolbox, web utilities">
+    <meta name="description" content="Kdeb Tools Web Toolbox - 2FA Live Code Generator, Facebook UID Live Checker, My IP Address & ISP Analyzer, Hashtag Generator, Name Generator.">
+    <meta name="keywords" content="Kdeb Tools, kdeb tools, 2FA live generator, UID live checker, IP address checker, hashtag generator, name generator, web toolbox, web utilities">
 
     <!-- Auto Clean URL: លុបកន្ទុយ .html ចេញពី URL Bar ភ្លាមៗពេលបើកទំព័រ -->
     <script>
@@ -141,7 +141,7 @@
 
     <!-- ================= MAIN CONTENT ================= -->
     <main class="flex-grow py-12">
-        <div class="max-w-5xl mx-auto px-4">
+        <div class="max-w-7xl mx-auto px-4">
             
             <!-- Upgraded Header (Web Toolbox) -->
             <div class="text-center mb-10">
@@ -156,16 +156,16 @@
                 </p>
             </div>
             
-            <!-- Tools Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Tools Grid (កែសម្រួលដើម្បីគាំទ្រ Card ចំនួន៥) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
                 
                 <!-- 2FA Card -->
-                <div class="bg-dark-card border border-dark-border hover:border-yellow-400/50 p-6 rounded-2xl text-center flex flex-col justify-between transition shadow-lg hover:shadow-yellow-500/5">
+                <div class="bg-dark-card border border-dark-border hover:border-yellow-400/50 p-5 rounded-2xl text-center flex flex-col justify-between transition shadow-lg hover:shadow-yellow-500/5">
                     <div>
                         <div class="w-12 h-12 mx-auto rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center mb-3">
                             <i class="fa-solid fa-key text-2xl text-yellow-400"></i>
                         </div>
-                        <h4 class="font-bold text-white text-sm">2FA Live Code Generator</h4>
+                        <h4 class="font-bold text-white text-sm">2FA Live Code</h4>
                         <p class="text-xs text-gray-400 mt-1 mb-4">បង្កើតកូដ 2FA ពី Secret Key</p>
                     </div>
                     <button onclick="open2FAModal()" class="btn-hover-zoom w-full bg-yellow-500 hover:bg-yellow-400 text-black font-bold text-xs py-2.5 rounded-xl shadow-md shadow-yellow-500/20">
@@ -174,7 +174,7 @@
                 </div>
 
                 <!-- UID Check Card -->
-                <div class="bg-dark-card border border-dark-border hover:border-emerald-400/50 p-6 rounded-2xl text-center flex flex-col justify-between transition shadow-lg hover:shadow-emerald-500/5">
+                <div class="bg-dark-card border border-dark-border hover:border-emerald-400/50 p-5 rounded-2xl text-center flex flex-col justify-between transition shadow-lg hover:shadow-emerald-500/5">
                     <div>
                         <div class="w-12 h-12 mx-auto rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-3">
                             <i class="fa-solid fa-id-badge text-2xl text-emerald-400"></i>
@@ -188,7 +188,7 @@
                 </div>
 
                 <!-- IP Tool Card -->
-                <div class="bg-dark-card border border-dark-border hover:border-cyan-400/50 p-6 rounded-2xl text-center flex flex-col justify-between transition shadow-lg hover:shadow-cyan-500/5">
+                <div class="bg-dark-card border border-dark-border hover:border-cyan-400/50 p-5 rounded-2xl text-center flex flex-col justify-between transition shadow-lg hover:shadow-cyan-500/5">
                     <div>
                         <div class="w-12 h-12 mx-auto rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mb-3">
                             <i class="fa-solid fa-network-wired text-2xl text-cyan-400"></i>
@@ -201,16 +201,32 @@
                     </button>
                 </div>
 
-                <!-- Media Grabber Card -->
-                <div class="bg-dark-card border border-dark-border p-6 rounded-2xl text-center flex flex-col justify-between shadow-lg">
+                <!-- Hashtag Generator Card -->
+                <div class="bg-dark-card border border-dark-border hover:border-purple-400/50 p-5 rounded-2xl text-center flex flex-col justify-between transition shadow-lg hover:shadow-purple-500/5">
                     <div>
                         <div class="w-12 h-12 mx-auto rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mb-3">
-                            <i class="fa-solid fa-video text-2xl text-purple-400"></i>
+                            <i class="fa-solid fa-hashtag text-2xl text-purple-400"></i>
                         </div>
-                        <h4 class="font-bold text-white text-sm">Media Grabber</h4>
-                        <p class="text-xs text-gray-400 mt-1 mb-4">ទាញយកវីដេអូរហ័ស</p>
+                        <h4 class="font-bold text-white text-sm">Hashtag Generator</h4>
+                        <p class="text-xs text-gray-400 mt-1 mb-4">បង្កើត Hashtag រហ័សតាម Keyword</p>
                     </div>
-                    <button onclick="alert('មុខងារ Media Grabber កំពុងរៀបចំដំណើរការ!')" class="btn-hover-zoom w-full bg-dark-bg border border-dark-border text-gray-400 text-xs py-2.5 rounded-xl">បើកប្រើ</button>
+                    <button onclick="openHashtagModal()" class="btn-hover-zoom w-full bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs py-2.5 rounded-xl shadow-md shadow-purple-600/20">
+                        បើកប្រើ
+                    </button>
+                </div>
+
+                <!-- Random Name Generator Card (បន្ថែមថ្មី) -->
+                <div class="bg-dark-card border border-dark-border hover:border-rose-400/50 p-5 rounded-2xl text-center flex flex-col justify-between transition shadow-lg hover:shadow-rose-500/5">
+                    <div>
+                        <div class="w-12 h-12 mx-auto rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center mb-3">
+                            <i class="fa-solid fa-signature text-2xl text-rose-400"></i>
+                        </div>
+                        <h4 class="font-bold text-white text-sm">Name Generator</h4>
+                        <p class="text-xs text-gray-400 mt-1 mb-4">បង្កើតឈ្មោះសិប្បនិម្មិតចម្រុះភាសា</p>
+                    </div>
+                    <button onclick="openNameModal()" class="btn-hover-zoom w-full bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs py-2.5 rounded-xl shadow-md shadow-rose-600/20">
+                        បើកប្រើ
+                    </button>
                 </div>
             </div>
         </div>
@@ -383,6 +399,102 @@
         </div>
     </div>
 
+    <!-- HASHTAG GENERATOR POPUP MODAL -->
+    <div id="modal-hashtag" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md hidden px-4">
+        <div class="bg-dark-card border border-dark-border rounded-2xl max-w-md w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeHashtagModal()" class="btn-hover-zoom absolute top-4 right-4 text-gray-400 hover:text-white text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="text-center mb-5">
+                <i class="fa-solid fa-hashtag text-purple-400 text-3xl mb-2"></i>
+                <h3 class="text-xl font-bold text-white">Hashtag Generator</h3>
+                <p class="text-xs text-gray-400">បង្កើត Hashtag ដែលទាក់ទងគ្នាទៅតាមពាក្យគន្លឹះ និងចំនួនដែលអ្នកកំណត់</p>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-300 mb-1.5">បញ្ចូលពាក្យគន្លឹះ (Keyword) ៖</label>
+                    <input type="text" id="hashtagKeyword" placeholder="ឧ. viral, tech, football, gaming..." class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2.5 text-white text-xs outline-none focus:border-purple-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-300 mb-1.5">ចំនួន Hashtag ដែលចង់បាន ៖</label>
+                    <input type="number" id="hashtagCount" min="1" max="50" value="15" class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2.5 text-white text-xs outline-none focus:border-purple-500">
+                </div>
+                <button onclick="generateHashtags()" class="btn-hover-zoom w-full bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs py-2.5 rounded-xl flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> បង្កើត Hashtag
+                </button>
+            </div>
+            <div id="hashtagResultBox" class="mt-4 hidden space-y-3">
+                <div class="bg-dark-bg border border-dark-border p-4 rounded-xl relative">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-[10px] text-gray-400 font-bold">លទ្ធផលទទួលបាន៖</span>
+                        <button onclick="copyGeneratedHashtags()" class="btn-hover-zoom text-xs bg-dark-card hover:bg-dark-hover border border-dark-border px-3 py-1 rounded-lg text-gray-300 font-semibold flex items-center gap-1">
+                            <i class="fa-regular fa-copy"></i> Copy All
+                        </button>
+                    </div>
+                    <div id="hashtagDisplay" class="text-xs text-purple-300 leading-relaxed max-h-40 overflow-y-auto break-words whitespace-pre-wrap font-mono select-all">
+                        <!-- Generated Hashtags here -->
+                    </div>
+                    <p id="hashtagCopyAlert" class="hidden text-emerald-400 text-[10px] mt-1.5 font-bold text-center">បានចម្លង Hashtag ទាំងអស់ជោគជ័យ!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NAME GENERATOR POPUP MODAL (បន្ថែមថ្មី) -->
+    <div id="modal-name" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md hidden px-4">
+        <div class="bg-dark-card border border-dark-border rounded-2xl max-w-md w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeNameModal()" class="btn-hover-zoom absolute top-4 right-4 text-gray-400 hover:text-white text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="text-center mb-5">
+                <i class="fa-solid fa-signature text-rose-400 text-3xl mb-2"></i>
+                <h3 class="text-xl font-bold text-white">Random Name Generator</h3>
+                <p class="text-xs text-gray-400">បង្កើតឈ្មោះសិប្បនិម្មិតទៅតាមប្រភេទភាសា ភេទ និងចំនួនដែលចង់បាន</p>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-300 mb-1.5">ជ្រើសរើសប្រភេទភាសា / ជាតិសាសន៍ ៖</label>
+                    <select id="nameLanguage" class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2.5 text-white text-xs outline-none focus:border-rose-500">
+                        <option value="khmer">ខ្មែរ (Khmer)</option>
+                        <option value="english">អង់គ្លេស (English)</option>
+                        <option value="korean">កូរ៉េ (Korean)</option>
+                        <option value="japanese">ជប៉ុន (Japanese)</option>
+                        <option value="chinese">ចិន (Chinese)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-300 mb-1.5">ជ្រើសរើសភេទ ៖</label>
+                    <select id="nameGender" class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2.5 text-white text-xs outline-none focus:border-rose-500">
+                        <option value="mixed">ចម្រុះ (Mixed)</option>
+                        <option value="male">ប្រុស (Male)</option>
+                        <option value="female">ស្រី (Female)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-300 mb-1.5">ចំនួនឈ្មោះដែលចង់បង្កើត ៖</label>
+                    <input type="number" id="nameCount" min="1" max="100" value="10" class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2.5 text-white text-xs outline-none focus:border-rose-500">
+                </div>
+                <button onclick="generateNames()" class="btn-hover-zoom w-full bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs py-2.5 rounded-xl flex items-center justify-center gap-1.5 shadow-md shadow-rose-600/20">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> ចាប់ផ្តើមបង្កើតឈ្មោះ
+                </button>
+            </div>
+            <div id="nameResultBox" class="mt-4 hidden space-y-3">
+                <div class="bg-dark-bg border border-dark-border p-4 rounded-xl relative">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-[10px] text-gray-400 font-bold">លទ្ធផលទទួលបាន៖</span>
+                        <button onclick="copyGeneratedNames()" class="btn-hover-zoom text-xs bg-dark-card hover:bg-dark-hover border border-dark-border px-3 py-1 rounded-lg text-gray-300 font-semibold flex items-center gap-1">
+                            <i class="fa-regular fa-copy"></i> Copy All
+                        </button>
+                    </div>
+                    <div id="nameDisplay" class="text-xs text-rose-300 leading-relaxed max-h-48 overflow-y-auto break-words font-mono select-all space-y-1">
+                        <!-- Generated Names list will appear here -->
+                    </div>
+                    <p id="nameCopyAlert" class="hidden text-emerald-400 text-[10px] mt-1.5 font-bold text-center">បានចម្លងឈ្មោះទាំងអស់ជោគជ័យ!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- FOOTER -->
     <footer class="bg-dark-card border-t border-dark-border py-6 text-center text-xs text-gray-500 mt-auto">
         <p>© ២០២៦ Kdeb Tools. Designed for creators & automation workflows.</p>
@@ -392,5 +504,7 @@
     <script src="js/2fa.js"></script>
     <script src="js/uid-check.js"></script>
     <script src="js/ip-tool.js"></script>
+    <script src="js/hashtag-generator.js"></script>
+    <script src="js/name-generator.js"></script>
 </body>
 </html>
